@@ -218,6 +218,64 @@ canvas#canvas {
   cursor: default;
 }
 
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#intro-overlay.hidden { display: none; }
+#intro-box {
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 28px 28px 24px;
+  max-width: 480px;
+  width: 100%;
+}
+#intro-box h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--fg);
+}
+#intro-box p {
+  font-size: 13px;
+  color: var(--fg2);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+#intro-box .legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--fg2);
+  margin-bottom: 6px;
+}
+#intro-box .dot {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+#intro-btn {
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#intro-btn:hover { opacity: 0.9; }
+
 #tooltip {
   position: fixed;
   pointer-events: none;
@@ -332,6 +390,20 @@ canvas#canvas {
 </button>
 
 <div id="modal-overlay" onclick="closeModal()"></div>
+
+<div id="intro-overlay">
+  <div id="intro-box">
+    <h2>What am I looking at?</h2>
+    <p>This map shows <strong>113 Dutch job types</strong> and how much each one is at risk of being replaced or changed by AI.</p>
+    <p><strong>Size</strong> = how many people work in that job. Bigger square = more workers.</p>
+    <p><strong>Color</strong> = how exposed the job is to AI:</p>
+    <div class="legend-row"><div class="dot" style="background:#32a050"></div> Green — low exposure, AI has little impact</div>
+    <div class="legend-row"><div class="dot" style="background:#e06020"></div> Orange — moderate exposure</div>
+    <div class="legend-row"><div class="dot" style="background:#e82000"></div> Red — high exposure, AI could take over most tasks</div>
+    <p style="margin-top:10px;">Tap or click any square to learn more about that job.</p>
+    <button id="intro-btn" onclick="closeIntro()">Got it, show me the map</button>
+  </div>
+</div>
 
 <div id="sidebar">
   <div class="lang-switch">
@@ -519,6 +591,15 @@ const MARGIN = 12;
 const GAP = 1.5;
 
 function isMobile() { return window.innerWidth <= 768; }
+
+function closeIntro() {
+  document.getElementById("intro-overlay").classList.add("hidden");
+}
+
+// Always show on load (no localStorage — show every visit/refresh)
+window.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("intro-overlay").classList.remove("hidden");
+});
 
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("open");

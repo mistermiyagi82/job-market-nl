@@ -323,6 +323,64 @@ canvas#canvas {
   border-top: 1px solid rgba(255,255,255,0.06);
   padding-top: 8px;
 }
+
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#intro-overlay.hidden { display: none; }
+#intro-box {
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 28px 28px 24px;
+  max-width: 480px;
+  width: 100%;
+}
+#intro-box h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--fg);
+}
+#intro-box p {
+  font-size: 13px;
+  color: var(--fg2);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+#intro-box .legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--fg2);
+  margin-bottom: 6px;
+}
+#intro-box .dot {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+#intro-btn {
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#intro-btn:hover { opacity: 0.9; }
 </style>
 </head>
 <body>
@@ -332,6 +390,20 @@ canvas#canvas {
 </button>
 
 <div id="modal-overlay" onclick="closeModal()"></div>
+
+<div id="intro-overlay">
+  <div id="intro-box">
+    <h2>Wat zie je hier?</h2>
+    <p>Op deze interactieve treemap zie je in één oogopslag welke van de 113 Nederlandse beroepen het meest blootgesteld zijn aan AI — hoe groter het vlak, hoe meer banen, en hoe roder de kleur, hoe hoger de AI-blootstelling.</p>
+    <p>De Nederlandse arbeidsmarkt is sterk verdeeld: bijna de helft van alle 9,7 miljoen banen en €203 miljard aan jaarlonen zit in beroepen met een lage AI-blootstelling, terwijl een kwart van de banen — met name in administratie en financiën — juist een hoge blootstelling kent.</p>
+    <p><strong>Kleur</strong> = mate van AI-blootstelling:</p>
+    <div class="legend-row"><div class="dot" style="background:#32a050"></div> Groen — laag, AI heeft weinig impact</div>
+    <div class="legend-row"><div class="dot" style="background:#e06020"></div> Oranje — gemiddeld</div>
+    <div class="legend-row"><div class="dot" style="background:#e82000"></div> Rood — hoog, AI kan veel taken overnemen</div>
+    <p style="margin-top:10px;">Klik of tik op een vlak voor meer informatie over dat beroep.</p>
+    <button id="intro-btn" onclick="closeIntro()">Bekijk de kaart</button>
+  </div>
+</div>
 
 <div id="sidebar">
   <div class="lang-switch">
@@ -519,6 +591,14 @@ const MARGIN = 12;
 const GAP = 1.5;
 
 function isMobile() { return window.innerWidth <= 768; }
+
+function closeIntro() {
+  document.getElementById("intro-overlay").classList.add("hidden");
+}
+
+window.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("intro-overlay").classList.remove("hidden");
+});
 
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("open");
