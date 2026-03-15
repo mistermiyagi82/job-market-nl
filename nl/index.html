@@ -3,7 +3,7 @@
 <head>
 <meta name="author" content="Daniel Siahaya">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AI-blootstelling op de Nederlandse arbeidsmarkt</title>
 <meta name="description" content="Interactieve treemap die AI-blootstelling visualiseert voor 113 Nederlandse beroepen. Oppervlakte = werkgelegenheid, kleur = AI-blootstelling. Data van CBS, ROA en UWV.">
 <style>
@@ -23,6 +23,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   overflow: hidden;
   height: 100vh;
+  touch-action: manipulation;
 }
 
 #sidebar {
@@ -209,6 +210,69 @@ body {
   opacity: 1;
 }
 
+/* ── Mobile ──────────────────────────────────────────────────────────── */
+
+#hamburger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 30;
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 9px 10px;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+}
+#hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--fg);
+  border-radius: 1px;
+  transition: all 0.2s;
+}
+
+#modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 24;
+}
+#modal-overlay.visible { display: block; }
+
+@media (max-width: 768px) {
+  #hamburger { display: flex; }
+
+  #sidebar {
+    width: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 25;
+    padding-top: 60px;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  #sidebar.open { transform: translateX(0); }
+
+  canvas#canvas { left: 0 !important; }
+
+  #tooltip {
+    pointer-events: none;
+    width: 90vw;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 26;
+  }
+  #tooltip.visible {
+    pointer-events: auto;
+  }
+}
+
 canvas#canvas {
   display: block;
   position: fixed;
@@ -262,6 +326,12 @@ canvas#canvas {
 </style>
 </head>
 <body>
+
+<button id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</button>
+
+<div id="modal-overlay" onclick="closeModal()"></div>
 
 <div id="sidebar">
   <div class="lang-switch">
@@ -448,8 +518,21 @@ let dpr = window.devicePixelRatio || 1;
 const MARGIN = 12;
 const GAP = 1.5;
 
+function isMobile() { return window.innerWidth <= 768; }
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+function closeModal() {
+  hideTooltip();
+  document.getElementById("modal-overlay").classList.remove("visible");
+  hovered = null;
+  draw();
+}
+
 function layout() {
-  const sidebarW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
+  const sidebarW = isMobile() ? 0 : parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
   const w = (window.innerWidth - sidebarW);
   const h = window.innerHeight;
 
@@ -548,7 +631,7 @@ function draw() {
 }
 
 function hitTest(mx, my) {
-  const sidebarW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
+  const sidebarW = isMobile() ? 0 : parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
   const cx = mx - sidebarW;
   const cy = my;
   for (let i = rects.length - 1; i >= 0; i--) {
@@ -604,13 +687,19 @@ function showTooltip(d, mx, my) {
 
   const pad = 16;
   let tx = mx + pad;
-  let ty = my - pad;
-  if (tx + 360 > window.innerWidth) tx = mx - 360 - pad;
-  if (ty < 10) ty = my + pad;
-  if (ty + 200 > window.innerHeight) ty = my - 200;
-
-  tt.style.left = tx + "px";
-  tt.style.top = ty + "px";
+  if (isMobile()) {
+    tt.style.left = "50%";
+    tt.style.top = "50%";
+    tt.style.transform = "translate(-50%, -50%)";
+  } else {
+    tt.style.transform = "";
+    let ty = my - pad;
+    if (tx + 360 > window.innerWidth) tx = mx - 360 - pad;
+    if (ty < 10) ty = my + pad;
+    if (ty + 200 > window.innerHeight) ty = my - 200;
+    tt.style.left = tx + "px";
+    tt.style.top = ty + "px";
+  }
   tt.classList.add("visible");
 }
 
@@ -769,11 +858,36 @@ canvas.addEventListener("mousemove", (e) => {
   }
 });
 
+let touchMoved = false;
+
+canvas.addEventListener("touchstart", () => {
+  touchMoved = false;
+  if (isMobile()) document.getElementById("sidebar").classList.remove("open");
+}, { passive: true });
+
+canvas.addEventListener("touchmove", () => {
+  touchMoved = true;
+}, { passive: true });
+
+canvas.addEventListener("touchend", (e) => {
+  if (!isMobile() || touchMoved) return;
+  e.preventDefault();
+  const touch = e.changedTouches[0];
+  const hit = hitTest(touch.clientX, touch.clientY);
+  if (!hit) return;
+  hovered = hit;
+  draw();
+  showTooltip(hit, 0, 0);
+  const overlay = document.getElementById("modal-overlay");
+  overlay.classList.add("visible");
+  overlay.style.pointerEvents = "none";
+  setTimeout(() => { overlay.style.pointerEvents = "auto"; }, 350);
+}, { passive: false });
+
 canvas.addEventListener("click", (e) => {
+  if (isMobile()) return;
   const hit = hitTest(e.clientX, e.clientY);
-  if (hit && hit.url) {
-    window.open(hit.url, "_blank");
-  }
+  if (hit && hit.url) window.open(hit.url, "_blank");
 });
 
 canvas.addEventListener("mouseleave", () => {
