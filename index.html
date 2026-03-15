@@ -627,7 +627,7 @@ function draw() {
 }
 
 function hitTest(mx, my) {
-  const sidebarW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
+  const sidebarW = isMobile() ? 0 : parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
   const cx = mx - sidebarW;
   const cy = my;
   for (let i = rects.length - 1; i >= 0; i--) {
