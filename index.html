@@ -23,6 +23,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   overflow: hidden;
   height: 100vh;
+  touch-action: manipulation;
 }
 
 #sidebar {
@@ -311,12 +312,15 @@ canvas#canvas {
   canvas#canvas { left: 0 !important; }
 
   #tooltip {
-    pointer-events: auto;
+    pointer-events: none;
     width: 90vw;
     max-width: 90vw;
     max-height: 80vh;
     overflow-y: auto;
     z-index: 26;
+  }
+  #tooltip.visible {
+    pointer-events: auto;
   }
 }
 </style>
