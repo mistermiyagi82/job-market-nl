@@ -994,11 +994,16 @@ function showTooltip(d, mx, my) {
 
   const tensionBadge = d.tension ? `<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;background:rgba(255,255,255,0.08);margin-left:4px;">${d.tension}</span>` : '';
 
+  const tensionLabelEN = {
+    'Tight': 'Tight (more openings than candidates)',
+    'Average': 'Average (supply meets demand)',
+    'Loose': 'Loose (more candidates than openings)'
+  };
   tt.querySelector(".tt-stats").innerHTML = `
     <span class="label">Median pay</span><span class="value">${formatPay(d.pay)}</span>
     <span class="label">Jobs</span><span class="value">${formatNumber(d.jobs)}</span>
-    <span class="label">Outlook 2030</span><span class="value">${d.outlook != null ? d.outlook + '%' : '\u2014'} ${d.outlook_desc ? '(' + d.outlook_desc + ')' : ''}</span>
-    <span class="label">Labor market</span><span class="value">${d.tension || '\u2014'}${d.bottleneck ? ' · Bottleneck: ' + d.bottleneck : ''}</span>
+    <span class="label">Expected job growth/yr</span><span class="value">${d.outlook != null ? (d.outlook > 0 ? '+' : '') + d.outlook + '%/yr' : '\u2014'}${d.outlook_desc ? ' · ' + d.outlook_desc : ''}</span>
+    <span class="label">Labor market</span><span class="value">${tensionLabelEN[d.tension] || d.tension || '\u2014'}${d.bottleneck ? ' · Bottleneck: ' + d.bottleneck : ''}</span>
     <span class="label">Education</span><span class="value">${d.education || '\u2014'}</span>
   `;
 

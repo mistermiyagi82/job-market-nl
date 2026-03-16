@@ -976,11 +976,16 @@ function showTooltip(d, mx, my) {
 
   const tensionBadge = d.tension ? `<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;background:rgba(255,255,255,0.08);margin-left:4px;">${d.tension}</span>` : '';
 
+  const tensionLabelNL = {
+    'Krap': 'Krap (meer vacatures dan kandidaten)',
+    'Gemiddeld': 'Gemiddeld (vraag en aanbod in balans)',
+    'Ruim': 'Ruim (meer kandidaten dan vacatures)'
+  };
   tt.querySelector(".tt-stats").innerHTML = `
     <span class="label">Mediaan jaarsalaris</span><span class="value">${formatPay(d.pay)}</span>
     <span class="label">Banen</span><span class="value">${formatNumber(d.jobs)}</span>
-    <span class="label">Vooruitzicht 2030</span><span class="value">${d.outlook != null ? d.outlook + '%' : '\u2014'} ${d.outlook_desc ? '(' + d.outlook_desc + ')' : ''}</span>
-    <span class="label">Arbeidsmarkt</span><span class="value">${d.tension || '\u2014'}${d.bottleneck ? ' · Knelpunt: ' + d.bottleneck : ''}</span>
+    <span class="label">Verwachte baangroei/jr</span><span class="value">${d.outlook != null ? (d.outlook > 0 ? '+' : '') + d.outlook + '%/jr' : '\u2014'}${d.outlook_desc ? ' · ' + d.outlook_desc : ''}</span>
+    <span class="label">Arbeidsmarkt</span><span class="value">${tensionLabelNL[d.tension] || d.tension || '\u2014'}${d.bottleneck ? ' · Knelpunt: ' + d.bottleneck : ''}</span>
     <span class="label">Opleiding</span><span class="value">${d.education || '\u2014'}</span>
   `;
 
