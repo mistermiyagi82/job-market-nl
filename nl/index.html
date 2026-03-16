@@ -340,9 +340,9 @@ canvas#canvas {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
   padding: 20px 24px 20px;
-  max-width: 480px;
+  max-width: 580px;
   width: 100%;
-  max-height: 90vh;
+  height: 80vh;
   display: flex;
   flex-direction: column;
 }
@@ -396,6 +396,46 @@ canvas#canvas {
   margin-bottom: 10px;
 }
 #intro-box a { color: var(--fg); }
+#intro-box h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 14px 0 4px;
+}
+#intro-box h3:first-child { margin-top: 0; }
+#intro-box hr {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin: 12px 0;
+}
+#intro-box code {
+  font-family: monospace;
+  font-size: 11px;
+  background: rgba(255,255,255,0.07);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--fg);
+}
+#intro-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-top: 6px;
+}
+#intro-box th {
+  text-align: left;
+  color: var(--fg2);
+  font-weight: 500;
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+#intro-box td {
+  color: var(--fg2);
+  padding: 4px 8px 4px 0;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+#intro-box td:first-child { color: var(--fg); }
 #intro-box .legend-row {
   display: flex;
   align-items: center;
@@ -464,11 +504,89 @@ canvas#canvas {
     </div>
 
     <div class="intro-panel">
-      <h2>Hoe berekenen we dit?</h2>
-      <p><strong>AI-blootstellingsscore (1–9)</strong><br>Elk beroep wordt opgesplitst in kerntaken. We beoordelen welk deel van die taken kan worden uitgevoerd of zinvol ondersteund door huidige AI-modellen — zoals taalmodellen, beeldherkenning en automatiseringstools.</p>
-      <p><strong>Grootte van elk vlak</strong><br>Evenredig aan het aantal mensen dat werkzaam is in dat beroep, op basis van CBS-data.</p>
-      <p><strong>Kleur</strong><br>Gekoppeld aan de AI-blootstellingsscore: groen (1–3) → oranje (4–6) → rood (7–9).</p>
-      <p><strong>Arbeidsmarktperspectief</strong><br>Vijfjarige prognose van het ROA: wordt de werkgelegenheid in dit beroep verwacht te groeien, stabiel te blijven of te krimpen?</p>
+      <h2>Databronnen &amp; Methode</h2>
+
+      <h3>Totaal werknemers: 8.183.000</h3>
+      <p><strong>Bron:</strong> CBS StatLine, tabel <code>85517NED</code> — "Werknemers; uurloon en beroep", jaar 2024<br>
+      <strong>Wat het meet:</strong> <em>Werknemers</em> — mensen met een loondienstverband. ZZP'ers zijn NIET meegenomen. De CBS EBB-enquête telt ~9,4M werkenden totaal, dus dit ondertelt met ~1,2M.<br>
+      <strong>Verifiëren:</strong> <code>cbsodata.get_data('85517NED')</code>, filter <code>Perioden == '2024'</code>, som <code>Werknemer_1 × 1000</code> voor alle 4-cijferige BRC-codes.</p>
+      <hr>
+
+      <h3>Gewogen gemiddelde blootstelling: 5,2/10</h3>
+      <p><strong>Bron:</strong> Eigen berekening — blootstellingsscore per beroep × aantal werknemers, gedeeld door totaal werknemers.<br>
+      <strong>Kanttekening:</strong> Scores zijn afkomstig van Gemini Flash via OpenRouter, op basis van ESCO-beschrijvingen. Dit zijn oordelen van een taalmodel, geen empirische metingen — beschouw ze als richtinggevend, niet als exact.<br>
+      <strong>Verifiëren:</strong> Open <code>data.json</code>, bereken <code>sum(exposure * jobs) / sum(jobs)</code>.</p>
+      <hr>
+
+      <h3>Verdeling per laag (31% / 26% / 38%)</h3>
+      <p><strong>Bron:</strong> Zelfde als hierboven. Directe telling van werknemers in beroepen met score 0–3, 4–6, 7–10.<br>
+      <strong>Kanttekening:</strong> Volledig afhankelijk van correcte kalibratie van de AI-scores.</p>
+      <hr>
+
+      <h3>€174 miljard aan lonen blootgesteld</h3>
+      <p><strong>Bron:</strong> CBS-loondata (<code>85517NED</code>) × jaarlijkse uren berekening.<br>
+      <strong>Formule:</strong> <code>mediaan_uurloon × 1.872 uur</code> (36 uur/week × 52 weken). 36 uur is het CBS-gemiddelde voor gecontracteerde uren van Nederlandse werknemers.<br>
+      <strong>Wat het meet:</strong> Mediaan loon × hoofdtellingen — niet de totale loonsom. Onderschat hoge inkomens en overschat lage inkomens. ZZP'ers zijn uitgesloten.<br>
+      <strong>Verifiëren:</strong> CBS StatLine <code>85517NED</code>, kolom <code>k_50ePercentielMediaan_3</code>.</p>
+      <hr>
+
+      <h3>Gemiddelde blootstelling per categorie (ICT 8,6; Zakelijk 8,0, etc.)</h3>
+      <p><strong>Bron:</strong> Zelfde CBS-werknemersaantallen + AI-scores, gegroepeerd op BRC 2014-sectorcode (2-cijferig prefix).<br>
+      <strong>Kanttekening:</strong> ICT heeft slechts 4 beroepsgroepen — kleine steekproef. Zakelijke dienstverlening heeft 13 groepen met een grote spreiding.</p>
+      <hr>
+
+      <h3>Werkgelegenheidsgroei (%/jaar)</h3>
+      <p><strong>Bron:</strong> ROA AIS tot 2030, DataverseNL <code>doi:10.34894/DVQTOG</code>, bestand <code>AIStot2030_Arbeidsmarktinformatie_editie2025.csv</code><br>
+      <strong>Variabele:</strong> <code>verwachte uitbreidingsvraag tot 2030</code>, veld <code>gemjaarlijksperc</code><br>
+      <strong>Wat het meet:</strong> Verwachte jaarlijkse netto werkgelegenheidsgroei 2025–2030. Vervangingsvraag (pensionering) is niet meegenomen.<br>
+      <strong>Verifiëren:</strong> Filter <code>aggregatieniveau == 'beroepsgroep (BRC2014)'</code> en <code>onderwerp == 'verwachte uitbreidingsvraag tot 2030'</code>.</p>
+      <hr>
+
+      <h3>Arbeidsmarktkrapte (Krap / Gemiddeld / Ruim)</h3>
+      <p><strong>Bron:</strong> ROA AIS tot 2030, zelfde bestand<br>
+      <strong>Variabele:</strong> <code>indicator huidige arbeidsmarktsituatie beroep (2024Q4)</code>, veld <code>typering</code><br>
+      <strong>Wat het meet:</strong> Arbeidsmarktkrapte Q4 2024, samengestelde ROA-indicator van vacatures vs. werkzoekenden.<br>
+      <strong>Verifiëren:</strong> Filter <code>onderwerp == 'indicator huidige arbeidsmarktsituatie beroep (2024Q4)'</code>.</p>
+      <hr>
+
+      <h3>Knelpunten (Vrijwel geen / Enige / Groot / Zeer groot)</h3>
+      <p><strong>Bron:</strong> ROA AIS tot 2030, zelfde bestand<br>
+      <strong>Variabele:</strong> <code>ITKB toekomstige knelpunten beroepsgroep in 2030</code>, veld <code>typering</code><br>
+      <strong>Wat het meet:</strong> ROA-prognose van wervingsmoeilijkheid in 2030.<br>
+      <strong>Verifiëren:</strong> Filter <code>onderwerp == 'ITKB toekomstige knelpunten beroepsgroep in 2030'</code>.</p>
+      <hr>
+
+      <h3>Opleidingsniveaus</h3>
+      <p><strong>Bron:</strong> ROA AIS tot 2030, zelfde bestand — variabelen <code>opleidingsachtergrond *</code><br>
+      <strong>Methode:</strong> Het opleidingsniveau met het hoogste aandeel werknemers per beroepsgroep.<br>
+      <strong>Kanttekening:</strong> Dit is het dominante niveau onder huidige werknemers, geen formele toelatingsvereiste.</p>
+      <hr>
+
+      <h3>Arbeidsmarktontwikkeling (Blijft krap / Richting evenwicht / etc.)</h3>
+      <p><strong>Bron:</strong> ROA AIS tot 2030, zelfde bestand<br>
+      <strong>Variabele:</strong> <code>verwachte arbeidsmarktontwikkeling beroep 2025-2030</code>, veld <code>typering</code><br>
+      <strong>Wat het meet:</strong> Hoe de arbeidsmarktkrapte naar verwachting evolueert van 2025 tot 2030.</p>
+      <hr>
+
+      <h3>AI-blootstellingsscores (0–10 per beroep)</h3>
+      <p><strong>Bron:</strong> Gemini Flash (via OpenRouter), gescoord op basis van:<br>
+      1. ESCO API — Engelstalige beroepsomschrijving + essentiële vaardigheden<br>
+      2. CBS-metadata — Nederlandse beroepsomschrijving<br>
+      <strong>Prompt:</strong> Elke beroepspagina aangeboden met een vaste rubric verankerd aan bekende voorbeelden (dakdekker = 1, softwareontwikkelaar = 9, gegevensinvoerder = 10).<br>
+      <strong>Kanttekening:</strong> Dit zijn modeloordelen. De relatieve volgorde tussen beroepen is betrouwbaarder dan de absolute scores.</p>
+      <hr>
+
+      <h3>Betrouwbaarheidsoverzicht</h3>
+      <table>
+        <tr><th>Claim</th><th>Betrouwbaarheid</th><th>Voornaamste risico</th></tr>
+        <tr><td>Werknemersaantallen (8,18M)</td><td>Hoog</td><td>ZZP uitgesloten, CBS 2024</td></tr>
+        <tr><td>Looncijfers</td><td>Gemiddeld</td><td>Mediaan uurloon × vaste uren</td></tr>
+        <tr><td>Groeiprognoses</td><td>Gemiddeld</td><td>ROA macromodel, dec. 2025</td></tr>
+        <tr><td>Arbeidsmarktkrapte</td><td>Hoog</td><td>ROA/CBS samengesteld, Q4 2024</td></tr>
+        <tr><td>Knelpunten 2030</td><td>Gemiddeld</td><td>Modelprognose, niet gemeten</td></tr>
+        <tr><td>AI-blootstellingsscores</td><td>Laag–Gemiddeld</td><td>Taalmodelsoordeel, niet empirisch</td></tr>
+        <tr><td>€174 mrd blootgesteld</td><td>Gemiddeld</td><td>Mediaan × hoofdtellingen</td></tr>
+      </table>
     </div>
 
     <div class="intro-panel">
