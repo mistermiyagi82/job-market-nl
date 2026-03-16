@@ -487,7 +487,7 @@ canvas#canvas {
       <h2>Wat zie je hier?</h2>
       <p>Op deze interactieve treemap zie je in één oogopslag welke van de <strong>113 Nederlandse beroepen</strong> het meest blootgesteld zijn aan AI — hoe groter het vlak, hoe meer banen, en hoe roder de kleur, hoe hoger de AI-blootstelling.</p>
       <p>De Nederlandse arbeidsmarkt is sterk verdeeld: een derde van alle 8,2 miljoen banen en €101 miljard aan jaarlonen zit in beroepen met een lage AI-blootstelling, terwijl bijna een kwart van de banen — met name in administratie en financiën — juist een hoge blootstelling kent.</p>
-      <p>⚠️ Een hoge blootstelling betekent niet dat jouw baan verdwijnt — het betekent dat AI waarschijnlijk verandert hoe je werkt.</p>
+      <p>⚠️ Een hoge blootstelling betekent niet dat je baan verdwijnt. <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Onderzoek van Anthropic (maart 2026)</a> vond <strong>geen systematische stijging van werkloosheid</strong> voor werknemers in sterk blootgestelde beroepen sinds de lancering van ChatGPT — al zijn er vroege signalen dat de instroom van werknemers van 22–25 jaar in blootgestelde beroepen enigszins is vertraagd. De volledige economische impact is nog onzeker.</p>
       <p><strong>Kleur</strong> = mate van AI-blootstelling:</p>
       <div class="legend-row"><div class="dot" style="background:#32a050"></div> Groen — laag, AI heeft weinig impact</div>
       <div class="legend-row"><div class="dot" style="background:#e06020"></div> Oranje — gemiddeld</div>
@@ -502,6 +502,7 @@ canvas#canvas {
       <p><strong><a href="https://roa.nl" target="_blank">ROA</a> — Researchcentrum voor Onderwijs en Arbeidsmarkt</strong><br>Arbeidsmarktprognoses, baanperspectieven en opleidingsvereisten per beroep.</p>
       <p><strong><a href="https://www.uwv.nl" target="_blank">UWV</a> — Uitvoeringsinstituut Werknemersverzekeringen</strong><br>Loongegevens en arbeidsmarktkrapte (tekort of overschot per beroep).</p>
       <p><strong>AI-blootstellingsscores</strong><br>Gebaseerd op taakanalyse: welk deel van de taken binnen een beroep kan worden uitgevoerd of ondersteund door huidige AI-modellen.</p>
+      <p><strong><a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic Economic Index</a></strong> — Massenkoff &amp; McCrory (2026)<br>Introduceert een onderscheid tussen <em>theoretische</em> blootstelling (wat taalmodellen aankunnen) en <em>geobserveerde</em> blootstelling (taken die daadwerkelijk worden geautomatiseerd in de praktijk). Onze scores zijn theoretisch. Anthropics onderzoek laat zien dat daadwerkelijke adoptie veel lager ligt — bijv. ICT-beroepen: 33% geobserveerd vs. 94% theoretisch.</p>
     </div>
 
     <div class="intro-panel">
@@ -575,6 +576,10 @@ canvas#canvas {
       2. CBS-metadata — Nederlandse beroepsomschrijving<br>
       <strong>Prompt:</strong> Elke beroepspagina aangeboden met een vaste rubric verankerd aan bekende voorbeelden (dakdekker = 1, softwareontwikkelaar = 9, gegevensinvoerder = 10).<br>
       <strong>Kanttekening:</strong> Dit zijn modeloordelen. De relatieve volgorde tussen beroepen is betrouwbaarder dan de absolute scores.</p>
+      <hr>
+
+      <h3>Theoretische vs. geobserveerde blootstelling</h3>
+      <p>Onze scores zijn <em>theoretisch</em> — een taalmodel beoordeelde per beroep hoeveel taken geautomatiseerd kunnen worden (conform Eloundou et al. 2023). <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropics paper van maart 2026</a> introduceert een aanvullende maat: <em>geobserveerde blootstelling</em>, gebaseerd op daadwerkelijk gebruik van Claude in professionele contexten. Kernbevinding: ICT-beroepen zijn theoretisch voor 94% uitvoerbaar door AI, maar in de praktijk dekt Claude slechts ~33% van de taken. Het verschil is nog groter bij administratieve beroepen.<br><strong>Wat dit betekent voor onze scores:</strong> beschouw ze als richtinggevende bovengrenzen voor potentiële impact, niet als voorspellingen van huidige automatisering. De relatieve volgorde tussen beroepen is betrouwbaarder dan de absolute scores.</p>
       <hr>
 
       <h3>Betrouwbaarheidsoverzicht</h3>

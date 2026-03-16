@@ -487,7 +487,7 @@ canvas#canvas {
       <h2>What are you looking at?</h2>
       <p>On this interactive treemap you can see at a glance which of the <strong>113 Dutch occupations</strong> are most exposed to AI — the larger the tile, the more jobs, and the redder the color, the higher the AI exposure.</p>
       <p>The Dutch labor market is sharply divided: a third of all 8.2 million jobs and €101 billion in annual wages sit in occupations with low AI exposure, while nearly a quarter of jobs — particularly in administration and finance — face high exposure.</p>
-      <p>⚠️ High exposure does not mean your job will disappear — it means AI is likely to change how you work.</p>
+      <p>⚠️ High exposure does not mean your job will disappear. <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic's own research (March 2026)</a> found <strong>no systematic increase in unemployment</strong> for highly exposed workers since ChatGPT launched — though there are early signs that hiring of workers aged 22–25 has slowed in exposed occupations. The full economic impact remains uncertain.</p>
       <p><strong>Color</strong> = level of AI exposure:</p>
       <div class="legend-row"><div class="dot" style="background:#32a050"></div> Green — low, AI has little impact</div>
       <div class="legend-row"><div class="dot" style="background:#e06020"></div> Orange — moderate</div>
@@ -502,6 +502,7 @@ canvas#canvas {
       <p><strong><a href="https://roa.nl" target="_blank">ROA</a> — Research Centre for Education and the Labour Market</strong><br>Labour market forecasts, job outlook scores, and education requirements per occupation.</p>
       <p><strong><a href="https://www.uwv.nl" target="_blank">UWV</a> — Dutch Employee Insurance Agency</strong><br>Wage data and labour market tension (shortage vs. surplus per occupation).</p>
       <p><strong>AI exposure scores</strong><br>Based on task-level analysis: how many tasks within each occupation can currently be performed or augmented by AI models.</p>
+      <p><strong><a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic Economic Index</a></strong> — Massenkoff &amp; McCrory (2026)<br>Introduces a distinction between <em>theoretical</em> AI exposure (what LLMs are capable of) and <em>observed</em> exposure (tasks actually being automated in professional use). Our scores are theoretical. Anthropic's research shows actual adoption is currently a fraction of theoretical capability — e.g. Computer &amp; Math occupations: 33% observed vs. 94% theoretical coverage.</p>
     </div>
 
     <div class="intro-panel">
@@ -575,6 +576,10 @@ canvas#canvas {
       2. CBS metadata — Dutch occupation scope description<br>
       <strong>Prompt:</strong> Each occupation's page sent with a fixed rubric anchored at known examples (roofer = 1, software developer = 9, data entry clerk = 10).<br>
       <strong>Caveat:</strong> Model judgments. Relative ordering between occupations is more reliable than absolute scores.</p>
+      <hr>
+
+      <h3>Theoretical vs. observed exposure</h3>
+      <p>Our scores are <em>theoretical</em> — an LLM assessed each occupation's tasks and judged how many could be automated (following Eloundou et al. 2023). <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic's March 2026 paper</a> introduces a complementary measure: <em>observed exposure</em>, based on actual Claude usage in professional contexts. Key finding: Computer &amp; Math occupations are 94% theoretically feasible, but Claude currently covers only ~33% of tasks in practice. The gap is even larger for Office &amp; Admin.<br><strong>What this means for our scores:</strong> treat them as directional upper bounds on potential impact, not predictions of current automation. Relative rankings are more reliable than absolute scores.</p>
       <hr>
 
       <h3>Confidence summary</h3>
