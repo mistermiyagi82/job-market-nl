@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta name="author" content="Daniel Siahaya">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AI Exposure of the Dutch Job Market</title>
+<meta name="description" content="Interactive treemap visualizing AI exposure for 113 Dutch occupations. Area = employment, color = AI exposure. Data from CBS, ROA, and UWV.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f8f6f2;
+  --bg2: #ffffff;
+  --fg: #1a1714;
+  --fg2: #8a857c;
+  --border: #e8e5df;
+  --accent: #8a6d3b;
+  --sidebar-w: 240px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  touch-action: manipulation;
+}
+
+#sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 20px 18px;
+  z-index: 10;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+#sidebar h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+#sidebar .subtitle {
+  font-size: 11px;
+  color: var(--fg2);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+#sidebar .subtitle a { color: var(--fg2); }
+
+.stat-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stat-section h3 {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg2);
+}
+.stat-big {
+  font-family: 'Instrument Serif', serif;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--fg2);
+}
+
+.tier-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tier-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.tier-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.tier-name {
+  flex: 1;
+  color: var(--fg2);
+}
+.tier-jobs {
+  text-align: right;
+  white-space: nowrap;
+}
+.tier-pct {
+  text-align: right;
+  width: 32px;
+  color: var(--fg2);
+  font-size: 10px;
+}
+
+.histogram {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 48px;
+}
+.histogram .bar {
+  flex: 1;
+  border-radius: 1px 1px 0 0;
+  min-height: 1px;
+  position: relative;
+}
+.hist-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--fg2);
+  margin-top: 2px;
+}
+
+.hbar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hbar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.hbar-label {
+  width: 78px;
+  flex-shrink: 0;
+  color: var(--fg2);
+  font-size: 10px;
+  text-align: right;
+}
+.hbar-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.hbar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+.hbar-val {
+  width: 22px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--fg);
+  text-align: right;
+}
+
+.gradient-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--fg2);
+}
+.gradient-legend canvas {
+  border-radius: 2px;
+}
+
+.footer-link {
+  font-size: 10px;
+  color: var(--fg2);
+  text-align: center;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+.footer-link a {
+  color: var(--fg2);
+  text-decoration: none;
+}
+.footer-link a:hover {
+  color: var(--fg);
+}
+
+.lang-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 20px;
+}
+.more-info-btn {
+  font-size: 11px;
+  color: var(--fg2);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  font-family: inherit;
+  margin-left: auto;
+}
+.more-info-btn:hover { opacity: 1; }
+.lang-switch a {
+  text-decoration: none;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+  cursor: pointer;
+}
+.lang-switch a.active {
+  opacity: 1;
+}
+.lang-switch a:hover {
+  opacity: 1;
+}
+
+canvas#canvas {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-w);
+  cursor: default;
+}
+
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#intro-overlay.hidden { display: none; }
+#intro-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px 20px;
+  max-width: 580px;
+  width: 100%;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.intro-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 16px;
+  background: #edeae4;
+  border-radius: 7px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.intro-tab {
+  flex: 1;
+  padding: 5px 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg2);
+  background: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.intro-tab.active {
+  background: var(--bg2);
+  color: var(--fg);
+}
+.intro-panels-wrap {
+  display: grid;
+  overflow-y: auto;
+  flex: 1;
+}
+.intro-panel {
+  grid-area: 1/1;
+  visibility: hidden;
+  overflow-y: auto;
+}
+.intro-panel.active { visibility: visible; }
+#intro-box h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  color: var(--fg);
+}
+#intro-box p, #intro-box li {
+  font-size: 13px;
+  color: var(--fg2);
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+#intro-box a { color: var(--fg); }
+#intro-box li strong { color: var(--fg); }
+#intro-box h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 14px 0 4px;
+}
+#intro-box h3:first-child { margin-top: 0; }
+#intro-box hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
+#intro-box code {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  background: #f0ede8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #5a5549;
+}
+#intro-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-top: 6px;
+}
+#intro-box th {
+  text-align: left;
+  color: var(--fg2);
+  font-weight: 500;
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+#intro-box td {
+  color: var(--fg2);
+  padding: 4px 8px 4px 0;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+#intro-box td:first-child { color: var(--fg); }
+#intro-box .legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--fg2);
+  margin-bottom: 6px;
+}
+#intro-box .dot {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+#intro-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 11px;
+  background: var(--fg);
+  color: var(--bg2);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+}
+#intro-btn:hover { opacity: 0.9; }
+
+#tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 360px;
+  opacity: 0;
+  transition: opacity 0.12s;
+  z-index: 26;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  color: var(--fg);
+}
+#tooltip.visible { opacity: 1; }
+#tooltip .tt-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--fg);
+}
+#tooltip .tt-exposure {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+#tooltip .tt-stats {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2px 12px;
+  font-size: 12px;
+}
+#tooltip .tt-stats .label { color: var(--fg2); }
+#tooltip .tt-stats .value { color: var(--fg); text-align: right; }
+#tooltip .tt-rationale {
+  font-size: 11px;
+  color: var(--fg2);
+  margin-top: 8px;
+  line-height: 1.4;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+/* ── Mobile ──────────────────────────────────────────────────────────── */
+
+#hamburger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 30;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 10px;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+}
+#hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--fg);
+  border-radius: 1px;
+  transition: all 0.2s;
+}
+
+#modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 24;
+}
+#modal-overlay.visible { display: block; }
+
+@media (max-width: 768px) {
+  #hamburger { display: flex; }
+
+  #sidebar {
+    width: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 25;
+    padding-top: 60px;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  #sidebar.open { transform: translateX(0); }
+
+  canvas#canvas { left: 0 !important; }
+
+  #tooltip {
+    pointer-events: none;
+    width: 90vw;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 26;
+  }
+  #tooltip.visible {
+    pointer-events: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<button id="hamburger" aria-label="Toggle menu" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</button>
+
+<div id="modal-overlay" onclick="closeModal()"></div>
+
+<div id="intro-overlay">
+  <div id="intro-box">
+    <div class="intro-tabs">
+      <button class="intro-tab active" onclick="switchTab(0)">What is this?</button>
+      <button class="intro-tab" onclick="switchTab(1)">Data sources</button>
+      <button class="intro-tab" onclick="switchTab(2)">How we calculate</button>
+      <button class="intro-tab" onclick="switchTab(3)">Automation vs. augmentation</button>
+      <button class="intro-tab" onclick="switchTab(4)">About</button>
+    </div>
+
+    <div class="intro-panels-wrap">
+    <div class="intro-panel active">
+      <h2>What are you looking at?</h2>
+      <p>On this interactive treemap you can see at a glance which of the <strong>113 Dutch occupations</strong> are most exposed to AI — the larger the tile, the more jobs, and the redder the color, the higher the AI exposure.</p>
+      <p>The Dutch labor market is sharply divided: a third of all 8.2 million jobs and €101 billion in annual wages sit in occupations with low AI exposure, while nearly a quarter of jobs — particularly in administration and finance — face high exposure.</p>
+      <p>⚠️ High exposure does not mean your job will disappear. <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic's own research (March 2026)</a> found <strong>no systematic increase in unemployment</strong> for highly exposed workers since ChatGPT launched — though there are early signs that hiring of workers aged 22–25 has slowed in exposed occupations. The full economic impact remains uncertain.</p>
+      <p><strong>Color</strong> = level of AI exposure:</p>
+      <div class="legend-row"><div class="dot" style="background:#32a050"></div> Green — low, AI has little impact</div>
+      <div class="legend-row"><div class="dot" style="background:#e06020"></div> Orange — moderate</div>
+      <div class="legend-row"><div class="dot" style="background:#e82000"></div> Red — high, AI could take over most tasks</div>
+      <div class="legend-row"><div class="dot" style="background:#808080"></div> Grey — no exposure score available</div>
+      <p style="margin-top:10px;">Click or tap a tile to learn more about that occupation.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Where does the data come from?</h2>
+      <p><strong><a href="https://www.cbs.nl" target="_blank">CBS</a> — Statistics Netherlands</strong><br>Employment figures per occupation (number of jobs, sector distribution).</p>
+      <p><strong><a href="https://roa.nl" target="_blank">ROA</a> — Research Centre for Education and the Labour Market</strong><br>Labour market forecasts, job outlook scores, and education requirements per occupation.</p>
+      <p><strong><a href="https://www.uwv.nl" target="_blank">UWV</a> — Dutch Employee Insurance Agency</strong><br>Wage data and labour market tension (shortage vs. surplus per occupation).</p>
+      <p><strong>AI exposure scores</strong><br>Based on task-level analysis: how many tasks within each occupation can currently be performed or augmented by AI models.</p>
+      <p><strong><a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic Economic Index</a></strong> — Massenkoff &amp; McCrory (2026)<br>Introduces a distinction between <em>theoretical</em> AI exposure (what LLMs are capable of) and <em>observed</em> exposure (tasks actually being automated in professional use). Our scores are theoretical. Anthropic's research shows actual adoption is currently a fraction of theoretical capability — e.g. Computer &amp; Math occupations: 33% observed vs. 94% theoretical coverage.</p>
+      <p><strong><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research — Tomlinson et al. (Dec 2025)</a></strong><br>Analyzed 200k anonymized Microsoft Bing Copilot conversations to measure AI applicability across occupations. Independent US-based dataset reaching similar conclusions to the Anthropic research: AI is most applicable to information work (communicating, learning, writing). All aggregated data published openly at <a href="https://github.com/microsoft/working-with-ai" target="_blank">github.com/microsoft/working-with-ai</a>.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Data Sources &amp; Methodology</h2>
+
+      <h3>Total workers: 8,183,000</h3>
+      <p><strong>Source:</strong> CBS StatLine, table <code>85517NED</code> — "Werknemers; uurloon en beroep", year 2024<br>
+      <strong>What it measures:</strong> <em>Werknemers</em> — employees with a wage contract. Does NOT include self-employed (ZZP). CBS EBB puts total working population at ~9.4M, so this undercounts by ~1.2M.<br>
+      <strong>Verify:</strong> <code>cbsodata.get_data('85517NED')</code>, filter <code>Perioden == '2024'</code>, sum <code>Werknemer_1 × 1000</code> for all 4-digit BRC codes.</p>
+      <hr>
+
+      <h3>Weighted average exposure: 5.2/10</h3>
+      <p><strong>Source:</strong> Our calculation — each occupation's exposure score × its worker count, divided by total workers.<br>
+      <strong>Caveat:</strong> Scores are from Gemini Flash via OpenRouter, using ESCO descriptions. These are LLM judgments, not empirical measurements — treat as directional, not precise.<br>
+      <strong>Verify:</strong> Open <code>data.json</code>, compute <code>sum(exposure * jobs) / sum(jobs)</code>.</p>
+      <hr>
+
+      <h3>Tier breakdown (31% / 26% / 38%)</h3>
+      <p><strong>Source:</strong> Same as above. Direct count of workers in occupations scoring 0–3, 4–6, 7–10.<br>
+      <strong>Caveat:</strong> Fully dependent on LLM scores being calibrated correctly.</p>
+      <hr>
+
+      <h3>€174B wages exposed</h3>
+      <p><strong>Source:</strong> CBS salary data (<code>85517NED</code>) × annual hours calculation.<br>
+      <strong>Formula:</strong> <code>median_hourly_wage × 1,872 hours</code> (36 hrs/week × 52 weeks). 36 hours is the CBS average contracted hours.<br>
+      <strong>What it measures:</strong> Median wage × headcount — not total wage bill. Underestimates high earners, overestimates low earners. Excludes ZZP.<br>
+      <strong>Verify:</strong> CBS StatLine <code>85517NED</code>, column <code>k_50ePercentielMediaan_3</code>.</p>
+      <hr>
+
+      <h3>Category exposure averages (ICT 8.6, Business &amp; Finance 8.0, etc.)</h3>
+      <p><strong>Source:</strong> Same CBS worker counts + LLM scores, grouped by BRC 2014 sector code (2-digit prefix).<br>
+      <strong>Caveat:</strong> ICT has only 4 occupation groups — small sample. Business &amp; Finance has 13 groups covering a wide range of jobs.</p>
+      <hr>
+
+      <h3>Employment growth forecasts (the %/yr figures)</h3>
+      <p><strong>Source:</strong> ROA AIS tot 2030, DataverseNL <code>doi:10.34894/DVQTOG</code>, file <code>AIStot2030_Arbeidsmarktinformatie_editie2025.csv</code><br>
+      <strong>Variable:</strong> <code>verwachte uitbreidingsvraag tot 2030</code>, field <code>gemjaarlijksperc</code><br>
+      <strong>What it measures:</strong> Expected annual net employment growth 2025–2030. Does not include replacement demand (retirements).<br>
+      <strong>Verify:</strong> Filter <code>aggregatieniveau == 'beroepsgroep (BRC2014)'</code> and <code>onderwerp == 'verwachte uitbreidingsvraag tot 2030'</code>.</p>
+      <hr>
+
+      <h3>Market tension (Tight / Average / Loose)</h3>
+      <p><strong>Source:</strong> ROA AIS tot 2030, same file<br>
+      <strong>Variable:</strong> <code>indicator huidige arbeidsmarktsituatie beroep (2024Q4)</code>, field <code>typering</code><br>
+      <strong>What it measures:</strong> Labor market tightness Q4 2024, ROA's composite of vacancies vs. job seekers. Dutch original: krap / gemiddeld / ruim.<br>
+      <strong>Verify:</strong> Filter <code>onderwerp == 'indicator huidige arbeidsmarktsituatie beroep (2024Q4)'</code>.</p>
+      <hr>
+
+      <h3>Bottleneck (Almost none / Some / Large / Very large)</h3>
+      <p><strong>Source:</strong> ROA AIS tot 2030, same file<br>
+      <strong>Variable:</strong> <code>ITKB toekomstige knelpunten beroepsgroep in 2030</code>, field <code>typering</code><br>
+      <strong>What it measures:</strong> ROA's forecast of recruitment difficulty by 2030. Dutch original: vrijwel geen / enige / groot / zeer groot.<br>
+      <strong>Verify:</strong> Filter <code>onderwerp == 'ITKB toekomstige knelpunten beroepsgroep in 2030'</code>.</p>
+      <hr>
+
+      <h3>Education levels</h3>
+      <p><strong>Source:</strong> ROA AIS tot 2030, same file — <code>opleidingsachtergrond *</code> variables<br>
+      <strong>Method:</strong> Took the education category with the highest share of workers per occupation group.<br>
+      <strong>Caveat:</strong> This is the dominant education level among current workers, not a formal entry requirement.</p>
+      <hr>
+
+      <h3>Outlook description</h3>
+      <p><strong>Source:</strong> ROA AIS tot 2030, same file<br>
+      <strong>Variable:</strong> <code>verwachte arbeidsmarktontwikkeling beroep 2025-2030</code>, field <code>typering</code><br>
+      <strong>What it measures:</strong> How labor market tightness is expected to evolve 2025–2030.</p>
+      <hr>
+
+      <h3>AI exposure scores (0–10 per occupation)</h3>
+      <p><strong>Source:</strong> Gemini Flash (via OpenRouter), scored using:<br>
+      1. ESCO API — English occupation description + essential skills<br>
+      2. CBS metadata — Dutch occupation scope description<br>
+      <strong>Prompt:</strong> Each occupation's page sent with a fixed rubric anchored at known examples (roofer = 1, software developer = 9, data entry clerk = 10).<br>
+      <strong>Caveat:</strong> Model judgments. Relative ordering between occupations is more reliable than absolute scores.</p>
+      <hr>
+
+      <h3>Theoretical vs. observed exposure</h3>
+      <p>Our scores are <em>theoretical</em> — an LLM assessed each occupation's tasks and judged how many could be automated (following Eloundou et al. 2023). <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic's March 2026 paper</a> introduces a complementary measure: <em>observed exposure</em>, based on actual Claude usage in professional contexts. Key finding: Computer &amp; Math occupations are 94% theoretically feasible, but Claude currently covers only ~33% of tasks in practice. The gap is even larger for Office &amp; Admin.<br><strong>What this means for our scores:</strong> treat them as directional upper bounds on potential impact, not predictions of current automation. Relative rankings are more reliable than absolute scores.</p>
+      <hr>
+
+      <h3>Confidence summary</h3>
+      <table>
+        <tr><th>Claim</th><th>Confidence</th><th>Main risk</th></tr>
+        <tr><td>Worker counts (8.18M)</td><td>High</td><td>ZZP excluded, CBS 2024</td></tr>
+        <tr><td>Salary figures</td><td>Medium</td><td>Median hourly × fixed hours</td></tr>
+        <tr><td>Growth forecasts</td><td>Medium</td><td>ROA macro model, Dec 2025</td></tr>
+        <tr><td>Market tension</td><td>High</td><td>ROA/CBS composite, Q4 2024</td></tr>
+        <tr><td>Bottleneck 2030</td><td>Medium</td><td>Model forecast, not observed</td></tr>
+        <tr><td>AI exposure scores</td><td>Low–Medium</td><td>LLM judgment, not empirical</td></tr>
+        <tr><td>€174B wages exposed</td><td>Medium</td><td>Median × headcount approx.</td></tr>
+      </table>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Automation vs. augmentation</h2>
+      <p><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research (Tomlinson et al. 2025)</a> identifies two distinct patterns in how AI affects occupations, based on 200k real Copilot conversations:</p>
+      <ul>
+        <li><strong>Delegation</strong> — workers hand off tasks to AI, which performs them autonomously. Most common in Business &amp; Finance and Media occupations.</li>
+        <li><strong>Augmentation</strong> — workers use AI as a tool while retaining control of the task. Most common in Computer &amp; Math and physical occupations.</li>
+      </ul>
+      <p><em>How this connects to the Dutch data:</em> Our Dutch Business &amp; Finance category averages 8.0/10 exposure and ICT 8.6/10 — the highest in the dataset. MS research suggests these two sectors likely follow different paths: Finance workers may increasingly <em>delegate</em> tasks like drafting, summarising, and data entry to AI; ICT workers are more likely to <em>use</em> AI as a productivity aid while their core judgment work stays human. Both show high theoretical exposure, but the real-world impact looks different.</p>
+      <p>A second relevant finding: MS found only a weak correlation between AI applicability and wages (r=0.13). In the Netherlands too, the most AI-exposed occupations include well-paid sectors like ICT, finance, and legal services — not just low-wage work. The economic impact of AI will be felt across the income spectrum.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>About</h2>
+      <p>🙋🏽‍♂️ This project was created by <strong><a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">Daniel Siahaya</a></strong>, Founder of <a href="https://www.linkedin.com/company/headfwd" target="_blank">HeadFWD</a>, an AI transformation partner for enterprise.</p>
+      <p>✅ The goal is to make labour market data on AI exposure accessible and understandable, not to alarm, but to inform.</p>
+      <p>📥 Have feedback, data corrections, or ideas? Reach out on <a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">LinkedIn</a>.</p>
+      <p>👊🏽 Credits of the idea of this app goes to: <a href="https://karpathy.ai" target="_blank">Andrej Karpathy</a>.</p>
+    </div>
+    </div>
+
+    <button id="intro-btn" onclick="closeIntro()">Explore the map</button>
+  </div>
+</div>
+
+<div id="sidebar">
+  <div class="lang-switch">
+    <a href="nl/" title="Nederlands">🇳🇱</a>
+    <a href="#" class="active" title="English">🇬🇧</a>
+    <button class="more-info-btn" onclick="document.getElementById('intro-overlay').classList.remove('hidden')">More info</button>
+  </div>
+  <div>
+    <h1>AI Exposure of the Dutch Job Market</h1>
+    <div class="subtitle">113 occupations &middot; area = employment &middot; color = AI exposure<br>Data from <a href="https://www.cbs.nl" target="_blank">CBS</a>, <a href="https://roa.nl" target="_blank">ROA</a> &amp; <a href="https://www.uwv.nl" target="_blank">UWV</a></div>
+  </div>
+
+  <div class="stat-section">
+    <h3>Total jobs</h3>
+    <div class="stat-big" id="statTotalJobs">&mdash;</div>
+  </div>
+
+  <div class="stat-section">
+    <h3>Weighted avg. exposure</h3>
+    <div class="stat-big" id="statAvgExposure">&mdash;</div>
+    <div class="stat-label">job-weighted, 0&ndash;10 scale</div>
+  </div>
+
+  <div class="stat-section">
+    <h3>Jobs by exposure (weighted)</h3>
+    <div class="histogram" id="histogram"></div>
+    <div class="hist-labels"><span>0</span><span>5</span><span>10</span></div>
+  </div>
+
+  <div class="stat-section">
+    <h3>Breakdown</h3>
+    <div class="tier-bar" id="tierBar"></div>
+  </div>
+
+  <div class="stat-section">
+    <h3>Exposure by pay</h3>
+    <div class="hbar-chart" id="payChart"></div>
+  </div>
+
+  <div class="stat-section">
+    <h3>Exposure by education</h3>
+    <div class="hbar-chart" id="eduChart"></div>
+  </div>
+
+  <div class="stat-section">
+    <h3>Wages exposed</h3>
+    <div class="stat-big" id="statWages">&mdash;</div>
+    <div class="stat-label" id="statWagesDesc">annual wages in high-exposure jobs (7+)</div>
+  </div>
+
+  <div class="gradient-legend">
+    <span>Low</span>
+    <canvas id="gradientLegend" width="80" height="8"></canvas>
+    <span>High</span>
+  </div>
+
+  <div class="footer-link">
+    <a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank" rel="noopener noreferrer">Created by Daniel Siahaya</a>
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div id="tooltip">
+  <div class="tt-title"></div>
+  <div class="tt-exposure"></div>
+  <div class="tt-stats"></div>
+  <div class="tt-rationale"></div>
+</div>
+
+<script>
+
+// ── Exposure color scale ───────────────────────────────────────────────
+
+function exposureColor(score) {
+  if (score == null) return [128, 128, 128];
+  const t = Math.max(0, Math.min(10, score)) / 10;
+  let r, g, b;
+  if (t < 0.5) {
+    const s = t / 0.5;
+    r = Math.round(50 + s * 180);
+    g = Math.round(160 - s * 10);
+    b = Math.round(50 - s * 20);
+  } else {
+    const s = (t - 0.5) / 0.5;
+    r = Math.round(230 + s * 25);
+    g = Math.round(150 - s * 110);
+    b = Math.round(30 - s * 10);
+  }
+  return [r, g, b];
+}
+
+function exposureColorCSS(score, alpha) {
+  const [r, g, b] = exposureColor(score);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ── Squarified treemap layout ──────────────────────────────────────────
+
+function squarify(items, x, y, w, h) {
+  if (items.length === 0) return [];
+  if (items.length === 1) {
+    return [{ ...items[0], rx: x, ry: y, rw: w, rh: h }];
+  }
+
+  const total = items.reduce((s, d) => s + d.value, 0);
+  if (total === 0) return [];
+
+  const results = [];
+  let remaining = [...items];
+  let cx = x, cy = y, cw = w, ch = h;
+
+  while (remaining.length > 0) {
+    const remTotal = remaining.reduce((s, d) => s + d.value, 0);
+    const vertical = cw >= ch;
+    const side = vertical ? ch : cw;
+
+    let row = [remaining[0]];
+    let rowSum = remaining[0].value;
+
+    for (let i = 1; i < remaining.length; i++) {
+      const candidate = [...row, remaining[i]];
+      const candidateSum = rowSum + remaining[i].value;
+      if (worstAspect(candidate, candidateSum, side, remTotal, vertical ? cw : ch) <
+          worstAspect(row, rowSum, side, remTotal, vertical ? cw : ch)) {
+        row = candidate;
+        rowSum = candidateSum;
+      } else {
+        break;
+      }
+    }
+
+    const rowFraction = rowSum / remTotal;
+    const rowThickness = vertical ? cw * rowFraction : ch * rowFraction;
+
+    let offset = 0;
+    for (const item of row) {
+      const itemFraction = item.value / rowSum;
+      const itemLength = side * itemFraction;
+      if (vertical) {
+        results.push({ ...item, rx: cx, ry: cy + offset, rw: rowThickness, rh: itemLength });
+      } else {
+        results.push({ ...item, rx: cx + offset, ry: cy, rw: itemLength, rh: rowThickness });
+      }
+      offset += itemLength;
+    }
+
+    if (vertical) {
+      cx += rowThickness;
+      cw -= rowThickness;
+    } else {
+      cy += rowThickness;
+      ch -= rowThickness;
+    }
+
+    remaining = remaining.slice(row.length);
+  }
+
+  return results;
+}
+
+function worstAspect(row, rowSum, side, totalArea, availableExtent) {
+  const rowExtent = availableExtent * (rowSum / totalArea);
+  if (rowExtent === 0) return Infinity;
+  let worst = 0;
+  for (const item of row) {
+    const itemLen = side * (item.value / rowSum);
+    if (itemLen === 0) continue;
+    const aspect = Math.max(rowExtent / itemLen, itemLen / rowExtent);
+    if (aspect > worst) worst = aspect;
+  }
+  return worst;
+}
+
+// ── Rendering ──────────────────────────────────────────────────────────
+
+let data = [];
+let rects = [];
+let hovered = null;
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let dpr = window.devicePixelRatio || 1;
+
+const MARGIN = 12;
+const GAP = 1.5;
+
+function isMobile() { return window.innerWidth <= 768; }
+
+function closeIntro() {
+  document.getElementById("intro-overlay").classList.add("hidden");
+}
+
+function switchTab(index) {
+  document.querySelectorAll(".intro-tab").forEach((t, i) => t.classList.toggle("active", i === index));
+  document.querySelectorAll(".intro-panel").forEach((p, i) => p.classList.toggle("active", i === index));
+}
+
+// Always show on load (no localStorage — show every visit/refresh)
+window.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("intro-overlay").classList.remove("hidden");
+});
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+function closeModal() {
+  hideTooltip();
+  document.getElementById("modal-overlay").classList.remove("visible");
+  hovered = null;
+  draw();
+}
+
+function layout() {
+  const sidebarW = isMobile() ? 0 : parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
+  const w = (window.innerWidth - sidebarW);
+  const h = window.innerHeight;
+
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
+
+  const tx = MARGIN;
+  const ty = MARGIN;
+  const tw = w - MARGIN * 2;
+  const th = h - MARGIN * 2;
+
+  const byCategory = {};
+  for (const d of data) {
+    const cat = d.category;
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push(d);
+  }
+
+  const categories = Object.keys(byCategory).map(cat => ({
+    cat,
+    items: byCategory[cat].sort((a, b) => (b.jobs || 0) - (a.jobs || 0)),
+    value: byCategory[cat].reduce((s, d) => s + (d.jobs || 1), 0),
+  })).sort((a, b) => b.value - a.value);
+
+  const catRects = squarify(categories, tx, ty, tw, th);
+
+  rects = [];
+  for (const cr of catRects) {
+    const innerGap = GAP;
+    const items = cr.items.map(d => ({ ...d, value: d.jobs || 1 }));
+    const innerRects = squarify(items,
+      cr.rx + innerGap, cr.ry + innerGap,
+      cr.rw - innerGap * 2, cr.rh - innerGap * 2
+    );
+    for (const ir of innerRects) {
+      rects.push(ir);
+    }
+  }
+}
+
+function draw() {
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = "#f8f6f2";
+  ctx.fillRect(0, 0, w / dpr, h / dpr);
+
+  for (const r of rects) {
+    const isHovered = r === hovered;
+
+    const g = GAP / 2;
+    const rx = r.rx + g;
+    const ry = r.ry + g;
+    const rw = r.rw - g * 2;
+    const rh = r.rh - g * 2;
+
+    if (rw <= 0 || rh <= 0) continue;
+
+    const fillAlpha = isHovered ? 0.95 : 0.75;
+    ctx.fillStyle = exposureColorCSS(r.exposure, fillAlpha);
+    ctx.fillRect(rx, ry, rw, rh);
+
+    if (isHovered) {
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(rx, ry, rw, rh);
+    }
+
+    const minW = 50;
+    const minH = 18;
+    if (rw > minW && rh > minH) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rx + 4, ry + 2, rw - 8, rh - 4);
+      ctx.clip();
+
+      const fontSize = Math.min(13, Math.max(9, Math.min(rw / 10, rh / 3)));
+      ctx.font = `500 ${fontSize}px -apple-system, system-ui, sans-serif`;
+      ctx.fillStyle = isHovered ? "#fff" : "rgba(255,255,255,0.95)";
+      ctx.textBaseline = "top";
+      ctx.fillText(r.title, rx + 5, ry + 4);
+
+      if (rh > 34 && rw > 60) {
+        const info = (r.exposure != null ? r.exposure + "/10" : "") +
+                     (r.jobs ? " \u00b7 " + formatNumber(r.jobs) + " jobs" : "");
+        ctx.font = `400 ${Math.max(8, fontSize - 2)}px -apple-system, system-ui, sans-serif`;
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.fillText(info, rx + 5, ry + 4 + fontSize + 2);
+      }
+
+      ctx.restore();
+    }
+  }
+}
+
+function hitTest(mx, my) {
+  const sidebarW = isMobile() ? 0 : parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-w'));
+  const cx = mx - sidebarW;
+  const cy = my;
+  for (let i = rects.length - 1; i >= 0; i--) {
+    const r = rects[i];
+    if (cx >= r.rx && cx < r.rx + r.rw && cy >= r.ry && cy < r.ry + r.rh) {
+      return r;
+    }
+  }
+  return null;
+}
+
+function formatNumber(n) {
+  if (n == null) return "\u2014";
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
+  if (n >= 1000) return Math.round(n / 1000).toLocaleString() + "K";
+  return n.toLocaleString();
+}
+
+function formatPay(n) {
+  if (n == null) return "\u2014";
+  return "\u20ac" + n.toLocaleString();
+}
+
+function showTooltip(d, mx, my) {
+  const tt = document.getElementById("tooltip");
+
+  tt.querySelector(".tt-title").textContent = d.title;
+
+  const score = d.exposure != null ? d.exposure : null;
+  if (score != null) {
+    const barWidth = score * 10;
+    const color = exposureColorCSS(score, 1);
+    tt.querySelector(".tt-exposure").innerHTML =
+      `<span style="color:${color};font-weight:600;">AI Exposure: ${score}/10</span>` +
+      `<div style="margin-top:3px;height:4px;background:rgba(0,0,0,0.06);border-radius:2px;">` +
+      `<div style="height:100%;width:${barWidth}%;background:${color};border-radius:2px;"></div></div>`;
+  } else {
+    tt.querySelector(".tt-exposure").innerHTML = "";
+  }
+
+  const tensionBadge = d.tension ? `<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;background:rgba(0,0,0,0.06);margin-left:4px;">${d.tension}</span>` : '';
+
+  tt.querySelector(".tt-stats").innerHTML = `
+    <span class="label">Median pay</span><span class="value">${formatPay(d.pay)}</span>
+    <span class="label">Jobs</span><span class="value">${formatNumber(d.jobs)}</span>
+    <span class="label">Outlook 2030</span><span class="value">${d.outlook != null ? d.outlook + '%' : '\u2014'} ${d.outlook_desc ? '(' + d.outlook_desc + ')' : ''}</span>
+    <span class="label">Labor market</span><span class="value">${d.tension || '\u2014'}${d.bottleneck ? ' · Bottleneck: ' + d.bottleneck : ''}</span>
+    <span class="label">Education</span><span class="value">${d.education || '\u2014'}</span>
+  `;
+
+  tt.querySelector(".tt-rationale").textContent =
+    d.exposure_rationale || "";
+
+  if (isMobile()) {
+    tt.style.left = "50%";
+    tt.style.top = "50%";
+    tt.style.transform = "translate(-50%, -50%)";
+  } else {
+    tt.style.transform = "";
+    const pad = 16;
+    let tx = mx + pad;
+    let ty = my - pad;
+    if (tx + 360 > window.innerWidth) tx = mx - 360 - pad;
+    if (ty < 10) ty = my + pad;
+    if (ty + 200 > window.innerHeight) ty = my - 200;
+    tt.style.left = tx + "px";
+    tt.style.top = ty + "px";
+  }
+  tt.classList.add("visible");
+}
+
+function hideTooltip() {
+  document.getElementById("tooltip").classList.remove("visible");
+}
+
+// ── Sidebar stats ──────────────────────────────────────────────────────
+
+function computeStats() {
+  const totalJobs = data.reduce((s, d) => s + (d.jobs || 0), 0);
+
+  // Job-weighted average exposure
+  let weightedSum = 0, weightedCount = 0;
+  for (const d of data) {
+    if (d.exposure != null && d.jobs) {
+      weightedSum += d.exposure * d.jobs;
+      weightedCount += d.jobs;
+    }
+  }
+  const weightedAvg = weightedCount > 0 ? weightedSum / weightedCount : 0;
+
+  // Histogram: jobs per exposure score 0-10
+  const histogram = new Array(11).fill(0);
+  for (const d of data) {
+    if (d.exposure != null && d.jobs) {
+      histogram[d.exposure] += d.jobs;
+    }
+  }
+
+  // Tiers
+  const tiers = [
+    { name: "Minimal", range: [0, 1], color: exposureColorCSS(0.5, 1) },
+    { name: "Low", range: [2, 3], color: exposureColorCSS(2.5, 1) },
+    { name: "Moderate", range: [4, 5], color: exposureColorCSS(4.5, 1) },
+    { name: "High", range: [6, 7], color: exposureColorCSS(6.5, 1) },
+    { name: "Very high", range: [8, 10], color: exposureColorCSS(9, 1) },
+  ];
+  for (const tier of tiers) {
+    tier.jobs = 0;
+    for (const d of data) {
+      if (d.exposure != null && d.jobs &&
+          d.exposure >= tier.range[0] && d.exposure <= tier.range[1]) {
+        tier.jobs += d.jobs;
+      }
+    }
+    tier.pct = totalJobs > 0 ? (tier.jobs / totalJobs * 100) : 0;
+  }
+
+  // Wages exposed (jobs with exposure >= 7, weighted by pay)
+  let wagesExposed = 0;
+  for (const d of data) {
+    if (d.exposure != null && d.exposure >= 7 && d.jobs && d.pay) {
+      wagesExposed += d.jobs * d.pay;
+    }
+  }
+
+  // Render
+  document.getElementById("statTotalJobs").textContent =
+    (totalJobs / 1e6).toFixed(1) + "M";
+  document.getElementById("statAvgExposure").innerHTML =
+    `<span style="color:${exposureColorCSS(weightedAvg, 1)}">${weightedAvg.toFixed(1)}</span>`;
+
+  // Histogram
+  const maxHist = Math.max(...histogram);
+  const histEl = document.getElementById("histogram");
+  histEl.innerHTML = histogram.map((count, i) => {
+    const h = maxHist > 0 ? (count / maxHist * 100) : 0;
+    return `<div class="bar" style="height:${Math.max(2, h)}%;background:${exposureColorCSS(i, 0.7)}" title="${i}: ${formatNumber(count)} jobs"></div>`;
+  }).join("");
+
+  // Tier breakdown
+  const tierEl = document.getElementById("tierBar");
+  tierEl.innerHTML = tiers.map(t =>
+    `<div class="tier-row">
+      <div class="tier-color" style="background:${t.color}"></div>
+      <span class="tier-name">${t.name} (${t.range[0]}-${t.range[1]})</span>
+      <span class="tier-jobs">${formatNumber(t.jobs)}</span>
+      <span class="tier-pct">${t.pct.toFixed(0)}%</span>
+    </div>`
+  ).join("");
+
+  // Exposure by pay band (EUR)
+  const payBands = [
+    { label: "<\u20ac25K", min: 0, max: 25000 },
+    { label: "\u20ac25\u201340K", min: 25000, max: 40000 },
+    { label: "\u20ac40\u201360K", min: 40000, max: 60000 },
+    { label: "\u20ac60\u201380K", min: 60000, max: 80000 },
+    { label: "\u20ac80K+", min: 80000, max: Infinity },
+  ];
+  const payChartEl = document.getElementById("payChart");
+  payChartEl.innerHTML = payBands.map(band => {
+    let wSum = 0, wCount = 0;
+    for (const d of data) {
+      if (d.exposure != null && d.jobs && d.pay != null &&
+          d.pay >= band.min && d.pay < band.max) {
+        wSum += d.exposure * d.jobs;
+        wCount += d.jobs;
+      }
+    }
+    const avg = wCount > 0 ? wSum / wCount : 0;
+    const pct = avg / 10 * 100;
+    return `<div class="hbar-row">
+      <span class="hbar-label">${band.label}</span>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${exposureColorCSS(avg, 0.8)}"></div></div>
+      <span class="hbar-val">${avg.toFixed(1)}</span>
+    </div>`;
+  }).join("");
+
+  // Exposure by education (Dutch system)
+  const eduGroups = [
+    { label: "VMBO/None", match: ["Primary education", "Pre-vocational (VMBO)", "Pre-vocational theoretical (VMBO-TL)"] },
+    { label: "HAVO/VWO", match: ["Senior secondary (HAVO/VWO)"] },
+    { label: "MBO", match: ["Vocational level 2 (MBO-2)", "Vocational level 3 (MBO-3)", "Vocational level 4 (MBO-4)"] },
+    { label: "Bachelor", match: ["Bachelor's degree (HBO/WO)"] },
+    { label: "Master", match: ["Master's degree (WO)"] },
+  ];
+  const eduChartEl = document.getElementById("eduChart");
+  eduChartEl.innerHTML = eduGroups.map(grp => {
+    let wSum = 0, wCount = 0;
+    for (const d of data) {
+      if (d.exposure != null && d.jobs && grp.match.includes(d.education)) {
+        wSum += d.exposure * d.jobs;
+        wCount += d.jobs;
+      }
+    }
+    const avg = wCount > 0 ? wSum / wCount : 0;
+    const pct = avg / 10 * 100;
+    return `<div class="hbar-row">
+      <span class="hbar-label">${grp.label}</span>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${exposureColorCSS(avg, 0.8)}"></div></div>
+      <span class="hbar-val">${avg.toFixed(1)}</span>
+    </div>`;
+  }).join("");
+
+  // Wages
+  const billions = wagesExposed / 1e9;
+  document.getElementById("statWages").textContent =
+    "\u20ac" + billions.toFixed(0) + "B";
+}
+
+// ── Events ─────────────────────────────────────────────────────────────
+
+let touchMoved = false;
+
+canvas.addEventListener("touchstart", () => {
+  touchMoved = false;
+  if (isMobile()) document.getElementById("sidebar").classList.remove("open");
+}, { passive: true });
+
+canvas.addEventListener("touchmove", () => {
+  touchMoved = true;
+}, { passive: true });
+
+canvas.addEventListener("touchend", (e) => {
+  if (!isMobile() || touchMoved) return;
+  e.preventDefault();
+  const touch = e.changedTouches[0];
+  const hit = hitTest(touch.clientX, touch.clientY);
+  if (!hit) return;
+  hovered = hit;
+  draw();
+  showTooltip(hit, 0, 0);
+  const overlay = document.getElementById("modal-overlay");
+  overlay.classList.add("visible");
+  // prevent ghost click from immediately closing
+  overlay.style.pointerEvents = "none";
+  setTimeout(() => { overlay.style.pointerEvents = "auto"; }, 350);
+}, { passive: false });
+
+canvas.addEventListener("mousemove", (e) => {
+  const hit = hitTest(e.clientX, e.clientY);
+  if (hit !== hovered) {
+    hovered = hit;
+    draw();
+  }
+  if (hovered) {
+    showTooltip(hovered, e.clientX, e.clientY);
+    canvas.style.cursor = "pointer";
+  } else {
+    hideTooltip();
+    canvas.style.cursor = "default";
+  }
+});
+
+canvas.addEventListener("click", (e) => {
+  if (isMobile()) return;
+  const hit = hitTest(e.clientX, e.clientY);
+  if (hit && hit.url) window.open(hit.url, "_blank");
+});
+
+canvas.addEventListener("mouseleave", () => {
+  hovered = null;
+  hideTooltip();
+  draw();
+});
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  layout();
+  draw();
+}
+
+// ── Legend gradient ────────────────────────────────────────────────────
+
+function drawGradientLegend() {
+  const c = document.getElementById("gradientLegend");
+  const gctx = c.getContext("2d");
+  for (let x = 0; x < 80; x++) {
+    const score = (x / 79) * 10;
+    gctx.fillStyle = exposureColorCSS(score, 1);
+    gctx.fillRect(x, 0, 1, 8);
+  }
+}
+
+// ── Load ───────────────────────────────────────────────────────────────
+
+fetch("data.json")
+  .then(r => r.json())
+  .then(d => {
+    data = d;
+    computeStats();
+    drawGradientLegend();
+    resize();
+  });
+
+window.addEventListener("resize", resize);
+</script>
+</body>
+</html>
