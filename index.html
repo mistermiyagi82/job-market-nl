@@ -194,9 +194,25 @@ body {
 
 .lang-switch {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
   font-size: 20px;
 }
+.more-info-btn {
+  font-size: 11px;
+  color: var(--fg2);
+  background: none;
+  border: 1px solid var(--fg2);
+  border-radius: 4px;
+  padding: 2px 7px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  font-family: inherit;
+  margin-left: auto;
+}
+.more-info-btn:hover { opacity: 1; }
 .lang-switch a {
   text-decoration: none;
   opacity: 0.4;
@@ -265,6 +281,15 @@ canvas#canvas {
 .intro-tab.active {
   background: var(--bg);
   color: var(--fg);
+}
+@media (max-width: 480px) {
+  .intro-tabs {
+    flex-direction: column;
+  }
+  .intro-tab {
+    text-align: center;
+    padding: 7px 10px;
+  }
 }
 .intro-panels-wrap {
   display: grid;
@@ -624,6 +649,7 @@ canvas#canvas {
   <div class="lang-switch">
     <a href="nl/" title="Nederlands">🇳🇱</a>
     <a href="#" class="active" title="English">🇬🇧</a>
+    <button class="more-info-btn" onclick="document.getElementById('intro-overlay').classList.remove('hidden')">More info</button>
   </div>
   <div>
     <h1>AI Exposure of the Dutch Job Market</h1>
