@@ -2,9 +2,7 @@
 
 An interactive treemap visualizing how exposed 113 Dutch occupations are to artificial intelligence — built as a single-page, zero-dependency web app.
 
-**Live:** [production.up.railway.app](https://production.up.railway.app) · Dutch version at `/nl/`
-
-![treemap preview](docs/design-system-claude-daan.md)
+**Live:** [job-market-nl-production.up.railway.app](https://job-market-nl-production.up.railway.app/) · Dutch version at [/nl/](https://job-market-nl-production.up.railway.app/nl/)
 
 ---
 
@@ -57,12 +55,10 @@ job-market-nl/
 │   └── data.json       # Occupation data (NL labels)
 ├── docs/
 │   ├── microsoft-research-ai-workforce.pdf
-│   ├── Microsoft_Insights_on_Workforce_Transformation_EN_US.pdf
 │   ├── Nowcasting_Econ-Report-v16.pdf
 │   └── design-system-claude-daan.md   # Visual design reference
 ├── Dockerfile
-├── nginx.conf
-└── archive/            # Old prototype versions (v2, v3)
+└── nginx.conf
 ```
 
 ---
