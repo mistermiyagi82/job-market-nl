@@ -503,6 +503,7 @@ canvas#canvas {
       <p><strong><a href="https://www.uwv.nl" target="_blank">UWV</a> — Uitvoeringsinstituut Werknemersverzekeringen</strong><br>Loongegevens en arbeidsmarktkrapte (tekort of overschot per beroep).</p>
       <p><strong>AI-blootstellingsscores</strong><br>Gebaseerd op taakanalyse: welk deel van de taken binnen een beroep kan worden uitgevoerd of ondersteund door huidige AI-modellen.</p>
       <p><strong><a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic Economic Index</a></strong> — Massenkoff &amp; McCrory (2026)<br>Introduceert een onderscheid tussen <em>theoretische</em> blootstelling (wat taalmodellen aankunnen) en <em>geobserveerde</em> blootstelling (taken die daadwerkelijk worden geautomatiseerd in de praktijk). Onze scores zijn theoretisch. Anthropics onderzoek laat zien dat daadwerkelijke adoptie veel lager ligt — bijv. ICT-beroepen: 33% geobserveerd vs. 94% theoretisch.</p>
+      <p><strong><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research — Tomlinson et al. (dec. 2025)</a></strong><br>Analyseerde 200.000 geanonimiseerde Microsoft Bing Copilot-gesprekken om AI-toepasbaarheid per beroep te meten. Onafhankelijke dataset (VS) die vergelijkbare conclusies trekt als het Anthropic-onderzoek: AI is het meest toepasbaar bij informatiewerk (communiceren, leren, schrijven). Alle geaggregeerde data openbaar beschikbaar op <a href="https://github.com/microsoft/working-with-ai" target="_blank">github.com/microsoft/working-with-ai</a>.</p>
     </div>
 
     <div class="intro-panel">
@@ -576,6 +577,16 @@ canvas#canvas {
       2. CBS-metadata — Nederlandse beroepsomschrijving<br>
       <strong>Prompt:</strong> Elke beroepspagina aangeboden met een vaste rubric verankerd aan bekende voorbeelden (dakdekker = 1, softwareontwikkelaar = 9, gegevensinvoerder = 10).<br>
       <strong>Kanttekening:</strong> Dit zijn modeloordelen. De relatieve volgorde tussen beroepen is betrouwbaarder dan de absolute scores.</p>
+      <hr>
+
+      <h3>Automatisering vs. augmentatie: twee manieren waarop AI werk verandert</h3>
+      <p><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research (Tomlinson et al. 2025)</a> onderscheidt twee patronen in hoe AI beroepen beïnvloedt, op basis van echte Copilot-gebruiksdata:</p>
+      <ul>
+        <li><strong>Delegatie</strong> — werknemers dragen taken over aan AI, die ze zelfstandig uitvoert. Komt het meest voor bij Zakelijke dienstverlening en Mediaberoepen.</li>
+        <li><strong>Augmentatie</strong> — werknemers gebruiken AI als hulpmiddel en behouden zelf de regie. Komt het meest voor bij ICT-beroepen en fysieke beroepen.</li>
+      </ul>
+      <p><em>Hoe dit aansluit op de Nederlandse data:</em> Onze categorie Zakelijke dienstverlening scoort gemiddeld 8,0/10 en ICT 8,6/10 — de hoogste in de dataset. MS-onderzoek suggereert dat deze twee sectoren een ander pad volgen: medewerkers in de financiële sector zullen taken als opstellen, samenvatten en gegevensinvoer steeds vaker <em>delegeren</em> aan AI; ICT'ers gebruiken AI eerder als productiviteitshulpmiddel terwijl hun kernwerk — oordeel en architectuur — menselijk blijft. Beide sectoren scoren hoog in onze data, maar de praktische impact verschilt.<br>
+      Een tweede relevante bevinding: MS vond slechts een zwakke correlatie tussen AI-toepasbaarheid en loon (r=0,13). Ook in Nederland bevinden de meest blootgestelde beroepen zich in goedbetaalde sectoren als ICT, financiën en juridische dienstverlening — niet alleen in laagbetaald werk. De economische impact van AI zal over het hele loonspectrum verdeeld zijn.</p>
       <hr>
 
       <h3>Theoretische vs. geobserveerde blootstelling</h3>

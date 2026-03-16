@@ -503,6 +503,7 @@ canvas#canvas {
       <p><strong><a href="https://www.uwv.nl" target="_blank">UWV</a> — Dutch Employee Insurance Agency</strong><br>Wage data and labour market tension (shortage vs. surplus per occupation).</p>
       <p><strong>AI exposure scores</strong><br>Based on task-level analysis: how many tasks within each occupation can currently be performed or augmented by AI models.</p>
       <p><strong><a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic Economic Index</a></strong> — Massenkoff &amp; McCrory (2026)<br>Introduces a distinction between <em>theoretical</em> AI exposure (what LLMs are capable of) and <em>observed</em> exposure (tasks actually being automated in professional use). Our scores are theoretical. Anthropic's research shows actual adoption is currently a fraction of theoretical capability — e.g. Computer &amp; Math occupations: 33% observed vs. 94% theoretical coverage.</p>
+      <p><strong><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research — Tomlinson et al. (Dec 2025)</a></strong><br>Analyzed 200k anonymized Microsoft Bing Copilot conversations to measure AI applicability across occupations. Independent US-based dataset reaching similar conclusions to the Anthropic research: AI is most applicable to information work (communicating, learning, writing). All aggregated data published openly at <a href="https://github.com/microsoft/working-with-ai" target="_blank">github.com/microsoft/working-with-ai</a>.</p>
     </div>
 
     <div class="intro-panel">
@@ -576,6 +577,16 @@ canvas#canvas {
       2. CBS metadata — Dutch occupation scope description<br>
       <strong>Prompt:</strong> Each occupation's page sent with a fixed rubric anchored at known examples (roofer = 1, software developer = 9, data entry clerk = 10).<br>
       <strong>Caveat:</strong> Model judgments. Relative ordering between occupations is more reliable than absolute scores.</p>
+      <hr>
+
+      <h3>Automation vs. augmentation: two ways AI changes work</h3>
+      <p><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research (Tomlinson et al. 2025)</a> identifies two distinct patterns in how AI affects occupations, based on real Copilot usage data:</p>
+      <ul>
+        <li><strong>Delegation</strong> — workers hand off tasks to AI, which performs them autonomously. Most common in Business &amp; Finance and Media occupations.</li>
+        <li><strong>Augmentation</strong> — workers use AI as a tool while retaining control of the task. Most common in Computer &amp; Math and physical occupations.</li>
+      </ul>
+      <p><em>How this connects to the Dutch data:</em> Our Dutch Business &amp; Finance category averages 8.0/10 exposure and ICT 8.6/10 — the highest in the dataset. MS research suggests these two sectors likely follow different paths: Finance workers may increasingly <em>delegate</em> tasks like drafting, summarising, and data entry to AI; ICT workers are more likely to <em>use</em> AI as a productivity aid while their core judgment work stays human. Both show high theoretical exposure, but the real-world impact looks different.<br>
+      A second relevant finding: MS found only a weak correlation between AI applicability and wages (r=0.13). In the Netherlands too, the most AI-exposed occupations include well-paid sectors like ICT, finance, and legal services — not just low-wage work. The economic impact of AI will be felt across the income spectrum.</p>
       <hr>
 
       <h3>Theoretical vs. observed exposure</h3>
