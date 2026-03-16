@@ -119,6 +119,6 @@ Each entry in `data.json` represents one occupation group:
 
 This project was created by [Daniel Siahaya](https://www.linkedin.com/in/danielsiahaya/), Founder of [HeadFWD](https://www.linkedin.com/company/headfwd) — built as a public-interest data visualization of the Dutch labour market.
 
-[HeadFWD](https://www.linkedin.com/company/headfwd) helps enterprises go AI-native — strategy and engineering, combined.
+[HeadFWD](https://www.linkedin.com/company/headfwd) is an AI transformation partner for enterprise — helping companies go from AI-absent to AI-native through strategy, engineering, and execution.
 
 Contributions, corrections to the data, and translations welcome via issues or pull requests.
