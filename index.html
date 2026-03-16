@@ -233,14 +233,49 @@ canvas#canvas {
   background: var(--bg2);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
-  padding: 28px 28px 24px;
+  padding: 20px 24px 20px;
   max-width: 480px;
   width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
+.intro-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 7px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.intro-tab {
+  flex: 1;
+  padding: 5px 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg2);
+  background: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.intro-tab.active {
+  background: var(--bg);
+  color: var(--fg);
+}
+.intro-panel {
+  display: none;
+  overflow-y: auto;
+  flex: 1;
+}
+.intro-panel.active { display: block; }
 #intro-box h2 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   color: var(--fg);
 }
 #intro-box p {
@@ -249,6 +284,7 @@ canvas#canvas {
   line-height: 1.6;
   margin-bottom: 10px;
 }
+#intro-box a { color: var(--fg); }
 #intro-box .legend-row {
   display: flex;
   align-items: center;
@@ -263,9 +299,9 @@ canvas#canvas {
   flex-shrink: 0;
 }
 #intro-btn {
-  margin-top: 18px;
+  margin-top: 16px;
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   background: var(--fg);
   color: var(--bg);
   border: none;
@@ -273,6 +309,7 @@ canvas#canvas {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  flex-shrink: 0;
 }
 #intro-btn:hover { opacity: 0.9; }
 
@@ -393,15 +430,48 @@ canvas#canvas {
 
 <div id="intro-overlay">
   <div id="intro-box">
-    <h2>What are you looking at?</h2>
-    <p>On this interactive treemap you can see at a glance which of the <strong>113 Dutch occupations</strong> are most exposed to AI — the larger the tile, the more jobs, and the redder the color, the higher the AI exposure.</p>
-    <p>The Dutch labor market is sharply divided: a third of all 8.2 million jobs and €101 billion in annual wages sit in occupations with low AI exposure, while nearly a quarter of jobs — particularly in administration and finance — face high exposure.</p>
-    <p>⚠️ High exposure does not mean your job will disappear — it means AI is likely to change how you work.</p>
-    <p><strong>Color</strong> = level of AI exposure:</p>
-    <div class="legend-row"><div class="dot" style="background:#32a050"></div> Green — low, AI has little impact</div>
-    <div class="legend-row"><div class="dot" style="background:#e06020"></div> Orange — moderate</div>
-    <div class="legend-row"><div class="dot" style="background:#e82000"></div> Red — high, AI could take over most tasks</div>
-    <p style="margin-top:10px;">Click or tap a tile to learn more about that occupation.</p>
+    <div class="intro-tabs">
+      <button class="intro-tab active" onclick="switchTab(0)">What is this?</button>
+      <button class="intro-tab" onclick="switchTab(1)">Data sources</button>
+      <button class="intro-tab" onclick="switchTab(2)">How we calculate</button>
+      <button class="intro-tab" onclick="switchTab(3)">About</button>
+    </div>
+
+    <div class="intro-panel active">
+      <h2>What are you looking at?</h2>
+      <p>On this interactive treemap you can see at a glance which of the <strong>113 Dutch occupations</strong> are most exposed to AI — the larger the tile, the more jobs, and the redder the color, the higher the AI exposure.</p>
+      <p>The Dutch labor market is sharply divided: a third of all 8.2 million jobs and €101 billion in annual wages sit in occupations with low AI exposure, while nearly a quarter of jobs — particularly in administration and finance — face high exposure.</p>
+      <p>⚠️ High exposure does not mean your job will disappear — it means AI is likely to change how you work.</p>
+      <p><strong>Color</strong> = level of AI exposure:</p>
+      <div class="legend-row"><div class="dot" style="background:#32a050"></div> Green — low, AI has little impact</div>
+      <div class="legend-row"><div class="dot" style="background:#e06020"></div> Orange — moderate</div>
+      <div class="legend-row"><div class="dot" style="background:#e82000"></div> Red — high, AI could take over most tasks</div>
+      <p style="margin-top:10px;">Click or tap a tile to learn more about that occupation.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Where does the data come from?</h2>
+      <p><strong><a href="https://www.cbs.nl" target="_blank">CBS</a> — Statistics Netherlands</strong><br>Employment figures per occupation (number of jobs, sector distribution).</p>
+      <p><strong><a href="https://roa.nl" target="_blank">ROA</a> — Research Centre for Education and the Labour Market</strong><br>Labour market forecasts, job outlook scores, and education requirements per occupation.</p>
+      <p><strong><a href="https://www.uwv.nl" target="_blank">UWV</a> — Dutch Employee Insurance Agency</strong><br>Wage data and labour market tension (shortage vs. surplus per occupation).</p>
+      <p><strong>AI exposure scores</strong><br>Based on task-level analysis: how many tasks within each occupation can currently be performed or augmented by AI models.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>How we calculate</h2>
+      <p><strong>AI exposure score (1–9)</strong><br>Each occupation is broken down into its core tasks. We assess what share of those tasks can be performed or meaningfully assisted by current AI models — such as language models, image recognition, and automation tools.</p>
+      <p><strong>Size of each tile</strong><br>Proportional to the number of people employed in that occupation, based on CBS data.</p>
+      <p><strong>Color</strong><br>Maps directly to the AI exposure score: green (1–3) → orange (4–6) → red (7–9).</p>
+      <p><strong>Outlook</strong><br>Five-year job market forecast from ROA, indicating whether employment in that occupation is expected to grow, stay stable, or shrink.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>About</h2>
+      <p>This project was created by <strong><a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">Daniel Siahaya</a></strong>.</p>
+      <p>The goal is to make labour market data on AI exposure accessible and understandable — not to alarm, but to inform.</p>
+      <p>Have feedback, data corrections, or ideas? Reach out on <a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">LinkedIn</a>.</p>
+    </div>
+
     <button id="intro-btn" onclick="closeIntro()">Explore the map</button>
   </div>
 </div>
@@ -595,6 +665,11 @@ function isMobile() { return window.innerWidth <= 768; }
 
 function closeIntro() {
   document.getElementById("intro-overlay").classList.add("hidden");
+}
+
+function switchTab(index) {
+  document.querySelectorAll(".intro-tab").forEach((t, i) => t.classList.toggle("active", i === index));
+  document.querySelectorAll(".intro-panel").forEach((p, i) => p.classList.toggle("active", i === index));
 }
 
 // Always show on load (no localStorage — show every visit/refresh)

@@ -339,14 +339,49 @@ canvas#canvas {
   background: var(--bg2);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
-  padding: 28px 28px 24px;
+  padding: 20px 24px 20px;
   max-width: 480px;
   width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
+.intro-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 7px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.intro-tab {
+  flex: 1;
+  padding: 5px 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg2);
+  background: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.intro-tab.active {
+  background: var(--bg);
+  color: var(--fg);
+}
+.intro-panel {
+  display: none;
+  overflow-y: auto;
+  flex: 1;
+}
+.intro-panel.active { display: block; }
 #intro-box h2 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   color: var(--fg);
 }
 #intro-box p {
@@ -355,6 +390,7 @@ canvas#canvas {
   line-height: 1.6;
   margin-bottom: 10px;
 }
+#intro-box a { color: var(--fg); }
 #intro-box .legend-row {
   display: flex;
   align-items: center;
@@ -369,9 +405,9 @@ canvas#canvas {
   flex-shrink: 0;
 }
 #intro-btn {
-  margin-top: 18px;
+  margin-top: 16px;
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   background: var(--fg);
   color: var(--bg);
   border: none;
@@ -379,6 +415,7 @@ canvas#canvas {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  flex-shrink: 0;
 }
 #intro-btn:hover { opacity: 0.9; }
 </style>
@@ -393,15 +430,48 @@ canvas#canvas {
 
 <div id="intro-overlay">
   <div id="intro-box">
-    <h2>Wat zie je hier?</h2>
-    <p>Op deze interactieve treemap zie je in één oogopslag welke van de 113 Nederlandse beroepen het meest blootgesteld zijn aan AI — hoe groter het vlak, hoe meer banen, en hoe roder de kleur, hoe hoger de AI-blootstelling.</p>
-    <p>De Nederlandse arbeidsmarkt is sterk verdeeld: een derde van alle 8,2 miljoen banen en €101 miljard aan jaarlonen zit in beroepen met een lage AI-blootstelling, terwijl bijna een kwart van de banen — met name in administratie en financiën — juist een hoge blootstelling kent.</p>
-    <p>⚠️ Een hoge blootstelling betekent niet dat jouw baan verdwijnt — het betekent dat AI waarschijnlijk verandert hoe je werkt.</p>
-    <p><strong>Kleur</strong> = mate van AI-blootstelling:</p>
-    <div class="legend-row"><div class="dot" style="background:#32a050"></div> Groen — laag, AI heeft weinig impact</div>
-    <div class="legend-row"><div class="dot" style="background:#e06020"></div> Oranje — gemiddeld</div>
-    <div class="legend-row"><div class="dot" style="background:#e82000"></div> Rood — hoog, AI kan veel taken overnemen</div>
-    <p style="margin-top:10px;">Klik of tik op een vlak voor meer informatie over dat beroep.</p>
+    <div class="intro-tabs">
+      <button class="intro-tab active" onclick="switchTab(0)">Wat is dit?</button>
+      <button class="intro-tab" onclick="switchTab(1)">Databronnen</button>
+      <button class="intro-tab" onclick="switchTab(2)">Berekening</button>
+      <button class="intro-tab" onclick="switchTab(3)">Over</button>
+    </div>
+
+    <div class="intro-panel active">
+      <h2>Wat zie je hier?</h2>
+      <p>Op deze interactieve treemap zie je in één oogopslag welke van de <strong>113 Nederlandse beroepen</strong> het meest blootgesteld zijn aan AI — hoe groter het vlak, hoe meer banen, en hoe roder de kleur, hoe hoger de AI-blootstelling.</p>
+      <p>De Nederlandse arbeidsmarkt is sterk verdeeld: een derde van alle 8,2 miljoen banen en €101 miljard aan jaarlonen zit in beroepen met een lage AI-blootstelling, terwijl bijna een kwart van de banen — met name in administratie en financiën — juist een hoge blootstelling kent.</p>
+      <p>⚠️ Een hoge blootstelling betekent niet dat jouw baan verdwijnt — het betekent dat AI waarschijnlijk verandert hoe je werkt.</p>
+      <p><strong>Kleur</strong> = mate van AI-blootstelling:</p>
+      <div class="legend-row"><div class="dot" style="background:#32a050"></div> Groen — laag, AI heeft weinig impact</div>
+      <div class="legend-row"><div class="dot" style="background:#e06020"></div> Oranje — gemiddeld</div>
+      <div class="legend-row"><div class="dot" style="background:#e82000"></div> Rood — hoog, AI kan veel taken overnemen</div>
+      <p style="margin-top:10px;">Klik of tik op een vlak voor meer informatie over dat beroep.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Waar komt de data vandaan?</h2>
+      <p><strong><a href="https://www.cbs.nl" target="_blank">CBS</a> — Centraal Bureau voor de Statistiek</strong><br>Werkgelegenheidscijfers per beroep (aantal banen, sectordistributie).</p>
+      <p><strong><a href="https://roa.nl" target="_blank">ROA</a> — Researchcentrum voor Onderwijs en Arbeidsmarkt</strong><br>Arbeidsmarktprognoses, baanperspectieven en opleidingsvereisten per beroep.</p>
+      <p><strong><a href="https://www.uwv.nl" target="_blank">UWV</a> — Uitvoeringsinstituut Werknemersverzekeringen</strong><br>Loongegevens en arbeidsmarktkrapte (tekort of overschot per beroep).</p>
+      <p><strong>AI-blootstellingsscores</strong><br>Gebaseerd op taakanalyse: welk deel van de taken binnen een beroep kan worden uitgevoerd of ondersteund door huidige AI-modellen.</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Hoe berekenen we dit?</h2>
+      <p><strong>AI-blootstellingsscore (1–9)</strong><br>Elk beroep wordt opgesplitst in kerntaken. We beoordelen welk deel van die taken kan worden uitgevoerd of zinvol ondersteund door huidige AI-modellen — zoals taalmodellen, beeldherkenning en automatiseringstools.</p>
+      <p><strong>Grootte van elk vlak</strong><br>Evenredig aan het aantal mensen dat werkzaam is in dat beroep, op basis van CBS-data.</p>
+      <p><strong>Kleur</strong><br>Gekoppeld aan de AI-blootstellingsscore: groen (1–3) → oranje (4–6) → rood (7–9).</p>
+      <p><strong>Arbeidsmarktperspectief</strong><br>Vijfjarige prognose van het ROA: wordt de werkgelegenheid in dit beroep verwacht te groeien, stabiel te blijven of te krimpen?</p>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Over</h2>
+      <p>Dit project is gemaakt door <strong><a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">Daniel Siahaya</a></strong>.</p>
+      <p>Het doel is om arbeidsmarktdata over AI-blootstelling toegankelijk en begrijpelijk te maken — niet om te alarmeren, maar om te informeren.</p>
+      <p>Feedback, datacorrecties of ideeën? Neem contact op via <a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">LinkedIn</a>.</p>
+    </div>
+
     <button id="intro-btn" onclick="closeIntro()">Bekijk de kaart</button>
   </div>
 </div>
@@ -595,6 +665,11 @@ function isMobile() { return window.innerWidth <= 768; }
 
 function closeIntro() {
   document.getElementById("intro-overlay").classList.add("hidden");
+}
+
+function switchTab(index) {
+  document.querySelectorAll(".intro-tab").forEach((t, i) => t.classList.toggle("active", i === index));
+  document.querySelectorAll(".intro-panel").forEach((p, i) => p.classList.toggle("active", i === index));
 }
 
 window.addEventListener("DOMContentLoaded", function() {
