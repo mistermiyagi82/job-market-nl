@@ -479,7 +479,8 @@ canvas#canvas {
       <button class="intro-tab active" onclick="switchTab(0)">Wat is dit?</button>
       <button class="intro-tab" onclick="switchTab(1)">Databronnen</button>
       <button class="intro-tab" onclick="switchTab(2)">Berekening</button>
-      <button class="intro-tab" onclick="switchTab(3)">Over</button>
+      <button class="intro-tab" onclick="switchTab(3)">Automatisering vs. augmentatie</button>
+      <button class="intro-tab" onclick="switchTab(4)">Over</button>
     </div>
 
     <div class="intro-panels-wrap">
@@ -579,16 +580,6 @@ canvas#canvas {
       <strong>Kanttekening:</strong> Dit zijn modeloordelen. De relatieve volgorde tussen beroepen is betrouwbaarder dan de absolute scores.</p>
       <hr>
 
-      <h3>Automatisering vs. augmentatie: twee manieren waarop AI werk verandert</h3>
-      <p><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research (Tomlinson et al. 2025)</a> onderscheidt twee patronen in hoe AI beroepen beïnvloedt, op basis van echte Copilot-gebruiksdata:</p>
-      <ul>
-        <li><strong>Delegatie</strong> — werknemers dragen taken over aan AI, die ze zelfstandig uitvoert. Komt het meest voor bij Zakelijke dienstverlening en Mediaberoepen.</li>
-        <li><strong>Augmentatie</strong> — werknemers gebruiken AI als hulpmiddel en behouden zelf de regie. Komt het meest voor bij ICT-beroepen en fysieke beroepen.</li>
-      </ul>
-      <p><em>Hoe dit aansluit op de Nederlandse data:</em> Onze categorie Zakelijke dienstverlening scoort gemiddeld 8,0/10 en ICT 8,6/10 — de hoogste in de dataset. MS-onderzoek suggereert dat deze twee sectoren een ander pad volgen: medewerkers in de financiële sector zullen taken als opstellen, samenvatten en gegevensinvoer steeds vaker <em>delegeren</em> aan AI; ICT'ers gebruiken AI eerder als productiviteitshulpmiddel terwijl hun kernwerk — oordeel en architectuur — menselijk blijft. Beide sectoren scoren hoog in onze data, maar de praktische impact verschilt.<br>
-      Een tweede relevante bevinding: MS vond slechts een zwakke correlatie tussen AI-toepasbaarheid en loon (r=0,13). Ook in Nederland bevinden de meest blootgestelde beroepen zich in goedbetaalde sectoren als ICT, financiën en juridische dienstverlening — niet alleen in laagbetaald werk. De economische impact van AI zal over het hele loonspectrum verdeeld zijn.</p>
-      <hr>
-
       <h3>Theoretische vs. geobserveerde blootstelling</h3>
       <p>Onze scores zijn <em>theoretisch</em> — een taalmodel beoordeelde per beroep hoeveel taken geautomatiseerd kunnen worden (conform Eloundou et al. 2023). <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropics paper van maart 2026</a> introduceert een aanvullende maat: <em>geobserveerde blootstelling</em>, gebaseerd op daadwerkelijk gebruik van Claude in professionele contexten. Kernbevinding: ICT-beroepen zijn theoretisch voor 94% uitvoerbaar door AI, maar in de praktijk dekt Claude slechts ~33% van de taken. Het verschil is nog groter bij administratieve beroepen.<br><strong>Wat dit betekent voor onze scores:</strong> beschouw ze als richtinggevende bovengrenzen voor potentiële impact, niet als voorspellingen van huidige automatisering. De relatieve volgorde tussen beroepen is betrouwbaarder dan de absolute scores.</p>
       <hr>
@@ -604,6 +595,17 @@ canvas#canvas {
         <tr><td>AI-blootstellingsscores</td><td>Laag–Gemiddeld</td><td>Taalmodelsoordeel, niet empirisch</td></tr>
         <tr><td>€174 mrd blootgesteld</td><td>Gemiddeld</td><td>Mediaan × hoofdtellingen</td></tr>
       </table>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Automatisering vs. augmentatie</h2>
+      <p><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research (Tomlinson et al. 2025)</a> onderscheidt twee patronen in hoe AI beroepen beïnvloedt, op basis van 200.000 echte Copilot-gesprekken:</p>
+      <ul>
+        <li><strong>Delegatie</strong> — werknemers dragen taken over aan AI, die ze zelfstandig uitvoert. Komt het meest voor bij Zakelijke dienstverlening en Mediaberoepen.</li>
+        <li><strong>Augmentatie</strong> — werknemers gebruiken AI als hulpmiddel en behouden zelf de regie. Komt het meest voor bij ICT-beroepen en fysieke beroepen.</li>
+      </ul>
+      <p><em>Hoe dit aansluit op de Nederlandse data:</em> Onze categorie Zakelijke dienstverlening scoort gemiddeld 8,0/10 en ICT 8,6/10 — de hoogste in de dataset. MS-onderzoek suggereert dat deze twee sectoren een ander pad volgen: medewerkers in de financiële sector zullen taken als opstellen, samenvatten en gegevensinvoer steeds vaker <em>delegeren</em> aan AI; ICT'ers gebruiken AI eerder als productiviteitshulpmiddel terwijl hun kernwerk — oordeel en architectuur — menselijk blijft. Beide sectoren scoren hoog in onze data, maar de praktische impact verschilt.</p>
+      <p>Een tweede relevante bevinding: MS vond slechts een zwakke correlatie tussen AI-toepasbaarheid en loon (r=0,13). Ook in Nederland bevinden de meest blootgestelde beroepen zich in goedbetaalde sectoren als ICT, financiën en juridische dienstverlening — niet alleen in laagbetaald werk. De economische impact van AI zal over het hele loonspectrum verdeeld zijn.</p>
     </div>
 
     <div class="intro-panel">

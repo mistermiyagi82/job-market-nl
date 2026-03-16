@@ -479,7 +479,8 @@ canvas#canvas {
       <button class="intro-tab active" onclick="switchTab(0)">What is this?</button>
       <button class="intro-tab" onclick="switchTab(1)">Data sources</button>
       <button class="intro-tab" onclick="switchTab(2)">How we calculate</button>
-      <button class="intro-tab" onclick="switchTab(3)">About</button>
+      <button class="intro-tab" onclick="switchTab(3)">Automation vs. augmentation</button>
+      <button class="intro-tab" onclick="switchTab(4)">About</button>
     </div>
 
     <div class="intro-panels-wrap">
@@ -579,16 +580,6 @@ canvas#canvas {
       <strong>Caveat:</strong> Model judgments. Relative ordering between occupations is more reliable than absolute scores.</p>
       <hr>
 
-      <h3>Automation vs. augmentation: two ways AI changes work</h3>
-      <p><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research (Tomlinson et al. 2025)</a> identifies two distinct patterns in how AI affects occupations, based on real Copilot usage data:</p>
-      <ul>
-        <li><strong>Delegation</strong> — workers hand off tasks to AI, which performs them autonomously. Most common in Business &amp; Finance and Media occupations.</li>
-        <li><strong>Augmentation</strong> — workers use AI as a tool while retaining control of the task. Most common in Computer &amp; Math and physical occupations.</li>
-      </ul>
-      <p><em>How this connects to the Dutch data:</em> Our Dutch Business &amp; Finance category averages 8.0/10 exposure and ICT 8.6/10 — the highest in the dataset. MS research suggests these two sectors likely follow different paths: Finance workers may increasingly <em>delegate</em> tasks like drafting, summarising, and data entry to AI; ICT workers are more likely to <em>use</em> AI as a productivity aid while their core judgment work stays human. Both show high theoretical exposure, but the real-world impact looks different.<br>
-      A second relevant finding: MS found only a weak correlation between AI applicability and wages (r=0.13). In the Netherlands too, the most AI-exposed occupations include well-paid sectors like ICT, finance, and legal services — not just low-wage work. The economic impact of AI will be felt across the income spectrum.</p>
-      <hr>
-
       <h3>Theoretical vs. observed exposure</h3>
       <p>Our scores are <em>theoretical</em> — an LLM assessed each occupation's tasks and judged how many could be automated (following Eloundou et al. 2023). <a href="https://www.anthropic.com/research/labor-market-impacts" target="_blank">Anthropic's March 2026 paper</a> introduces a complementary measure: <em>observed exposure</em>, based on actual Claude usage in professional contexts. Key finding: Computer &amp; Math occupations are 94% theoretically feasible, but Claude currently covers only ~33% of tasks in practice. The gap is even larger for Office &amp; Admin.<br><strong>What this means for our scores:</strong> treat them as directional upper bounds on potential impact, not predictions of current automation. Relative rankings are more reliable than absolute scores.</p>
       <hr>
@@ -604,6 +595,17 @@ canvas#canvas {
         <tr><td>AI exposure scores</td><td>Low–Medium</td><td>LLM judgment, not empirical</td></tr>
         <tr><td>€174B wages exposed</td><td>Medium</td><td>Median × headcount approx.</td></tr>
       </table>
+    </div>
+
+    <div class="intro-panel">
+      <h2>Automation vs. augmentation</h2>
+      <p><a href="https://arxiv.org/abs/2507.07935" target="_blank">Microsoft Research (Tomlinson et al. 2025)</a> identifies two distinct patterns in how AI affects occupations, based on 200k real Copilot conversations:</p>
+      <ul>
+        <li><strong>Delegation</strong> — workers hand off tasks to AI, which performs them autonomously. Most common in Business &amp; Finance and Media occupations.</li>
+        <li><strong>Augmentation</strong> — workers use AI as a tool while retaining control of the task. Most common in Computer &amp; Math and physical occupations.</li>
+      </ul>
+      <p><em>How this connects to the Dutch data:</em> Our Dutch Business &amp; Finance category averages 8.0/10 exposure and ICT 8.6/10 — the highest in the dataset. MS research suggests these two sectors likely follow different paths: Finance workers may increasingly <em>delegate</em> tasks like drafting, summarising, and data entry to AI; ICT workers are more likely to <em>use</em> AI as a productivity aid while their core judgment work stays human. Both show high theoretical exposure, but the real-world impact looks different.</p>
+      <p>A second relevant finding: MS found only a weak correlation between AI applicability and wages (r=0.13). In the Netherlands too, the most AI-exposed occupations include well-paid sectors like ICT, finance, and legal services — not just low-wage work. The economic impact of AI will be felt across the income spectrum.</p>
     </div>
 
     <div class="intro-panel">
