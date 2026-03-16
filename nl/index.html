@@ -372,12 +372,17 @@ canvas#canvas {
   background: var(--bg);
   color: var(--fg);
 }
-.intro-panel {
-  display: none;
+.intro-panels-wrap {
+  display: grid;
   overflow-y: auto;
   flex: 1;
 }
-.intro-panel.active { display: block; }
+.intro-panel {
+  grid-area: 1/1;
+  visibility: hidden;
+  overflow-y: auto;
+}
+.intro-panel.active { visibility: visible; }
 #intro-box h2 {
   font-size: 16px;
   font-weight: 600;
@@ -437,6 +442,7 @@ canvas#canvas {
       <button class="intro-tab" onclick="switchTab(3)">Over</button>
     </div>
 
+    <div class="intro-panels-wrap">
     <div class="intro-panel active">
       <h2>Wat zie je hier?</h2>
       <p>Op deze interactieve treemap zie je in één oogopslag welke van de <strong>113 Nederlandse beroepen</strong> het meest blootgesteld zijn aan AI — hoe groter het vlak, hoe meer banen, en hoe roder de kleur, hoe hoger de AI-blootstelling.</p>
@@ -470,6 +476,7 @@ canvas#canvas {
       <p>Dit project is gemaakt door <strong><a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">Daniel Siahaya</a></strong>.</p>
       <p>Het doel is om arbeidsmarktdata over AI-blootstelling toegankelijk en begrijpelijk te maken — niet om te alarmeren, maar om te informeren.</p>
       <p>Feedback, datacorrecties of ideeën? Neem contact op via <a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">LinkedIn</a>.</p>
+    </div>
     </div>
 
     <button id="intro-btn" onclick="closeIntro()">Bekijk de kaart</button>

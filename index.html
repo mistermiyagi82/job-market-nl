@@ -266,12 +266,17 @@ canvas#canvas {
   background: var(--bg);
   color: var(--fg);
 }
-.intro-panel {
-  display: none;
+.intro-panels-wrap {
+  display: grid;
   overflow-y: auto;
   flex: 1;
 }
-.intro-panel.active { display: block; }
+.intro-panel {
+  grid-area: 1/1;
+  visibility: hidden;
+  overflow-y: auto;
+}
+.intro-panel.active { visibility: visible; }
 #intro-box h2 {
   font-size: 16px;
   font-weight: 600;
@@ -437,6 +442,7 @@ canvas#canvas {
       <button class="intro-tab" onclick="switchTab(3)">About</button>
     </div>
 
+    <div class="intro-panels-wrap">
     <div class="intro-panel active">
       <h2>What are you looking at?</h2>
       <p>On this interactive treemap you can see at a glance which of the <strong>113 Dutch occupations</strong> are most exposed to AI — the larger the tile, the more jobs, and the redder the color, the higher the AI exposure.</p>
@@ -470,6 +476,7 @@ canvas#canvas {
       <p>This project was created by <strong><a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">Daniel Siahaya</a></strong>.</p>
       <p>The goal is to make labour market data on AI exposure accessible and understandable — not to alarm, but to inform.</p>
       <p>Have feedback, data corrections, or ideas? Reach out on <a href="https://www.linkedin.com/in/danielsiahaya/" target="_blank">LinkedIn</a>.</p>
+    </div>
     </div>
 
     <button id="intro-btn" onclick="closeIntro()">Explore the map</button>
