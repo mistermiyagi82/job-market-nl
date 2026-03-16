@@ -117,6 +117,6 @@ Each entry in `data.json` represents one occupation group:
 
 ## Author
 
-**Daniel Siahaya** — built as a public-interest data visualization of the Dutch labour market.
+This project was created by [Daniel Siahaya](https://www.linkedin.com/in/danielsiahaya/), Founder of [HeadFWD](https://www.linkedin.com/company/headfwd) — built as a public-interest data visualization of the Dutch labour market.
 
 Contributions, corrections to the data, and translations welcome via issues or pull requests.
