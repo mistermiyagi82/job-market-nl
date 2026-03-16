@@ -258,6 +258,7 @@ canvas#canvas {
 }
 .intro-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 2px;
   margin-bottom: 16px;
   background: rgba(255,255,255,0.05);
@@ -276,20 +277,10 @@ canvas#canvas {
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
-  white-space: nowrap;
 }
 .intro-tab.active {
   background: var(--bg);
   color: var(--fg);
-}
-@media (max-width: 480px) {
-  .intro-tabs {
-    flex-direction: column;
-  }
-  .intro-tab {
-    text-align: center;
-    padding: 7px 10px;
-  }
 }
 .intro-panels-wrap {
   display: grid;
