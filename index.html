@@ -203,7 +203,7 @@ body {
   font-size: 11px;
   color: var(--fg2);
   background: none;
-  border: 1px solid var(--fg2);
+  border: 1px solid #e63b2e;
   border-radius: 4px;
   padding: 2px 7px;
   cursor: pointer;
@@ -259,28 +259,30 @@ canvas#canvas {
 .intro-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 6px;
   margin-bottom: 16px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 7px;
-  padding: 3px;
   flex-shrink: 0;
 }
 .intro-tab {
-  flex: 1;
-  padding: 5px 4px;
-  font-size: 11px;
+  padding: 5px 12px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--fg2);
   background: none;
-  border: none;
-  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  font-family: inherit;
+}
+.intro-tab:hover {
+  border-color: rgba(255,255,255,0.4);
+  color: var(--fg);
 }
 .intro-tab.active {
-  background: var(--bg);
-  color: var(--fg);
+  background: #e63b2e;
+  border-color: #e63b2e;
+  color: #fff;
 }
 .intro-panels-wrap {
   display: grid;
