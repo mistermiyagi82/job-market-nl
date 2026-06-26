@@ -128,6 +128,31 @@
   }
   #btn-reset:hover { background: #374151; color: #E5E7EB; }
   #btn-reset:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  #save-note {
+    font-size: 10px;
+    line-height: 1.4;
+    color: #6B7280;
+    margin-bottom: 10px;
+  }
+  /* transient "saved" toast */
+  #save-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--teal);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .2s, transform .2s;
+    pointer-events: none;
+    z-index: 1000;
+  }
+  #save-indicator.visible { opacity: 1; transform: translateY(0); }
 
   /* ── Main canvas ──────────────────────────────────────────────────── */
   #main {
@@ -432,8 +457,12 @@
     <div class="nav-item" data-tab="3"><span class="nav-num">04</span> Verdeling</div>
   </nav>
   <div class="sidebar-footer">
+    <div id="save-note">✓ Wijzigingen worden automatisch opgeslagen in deze browser</div>
     <button id="btn-reset">↺ Reset naar standaard</button>
   </div>
+
+  <!-- transient "saved" toast -->
+  <div id="save-indicator">✓ Opgeslagen</div>
 </nav>
 
 <!-- ═══════════════════════════════════════════════════════════════════ MAIN -->
@@ -952,6 +981,45 @@ function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
 let S = deepClone(DEFAULTS);
 
 // ═══════════════════════════════════════════════════════════════════════
+// PERSISTENCE — save every edit to the browser (survives refresh)
+// ═══════════════════════════════════════════════════════════════════════
+const STORAGE_KEY = 'datapraat-deal-model-v1';
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(S));
+    flashSaved();
+  } catch (e) { /* storage unavailable / full — ignore */ }
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      // Merge over defaults so any newly-added fields still get a value
+      S = Object.assign(deepClone(DEFAULTS), parsed);
+      return true;
+    }
+  } catch (e) { /* corrupt data — fall back to defaults */ }
+  return false;
+}
+
+function clearSaved() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+
+let _savedTimer = null;
+function flashSaved() {
+  const el = document.getElementById('save-indicator');
+  if (!el) return;
+  el.classList.add('visible');
+  clearTimeout(_savedTimer);
+  _savedTimer = setTimeout(() => el.classList.remove('visible'), 1200);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // FORMATTING
 // ═══════════════════════════════════════════════════════════════════════
 const fmtEur = new Intl.NumberFormat('nl-NL', {style:'currency', currency:'EUR', maximumFractionDigits:0});
@@ -1314,6 +1382,9 @@ document.getElementById('main').addEventListener('input', function(e) {
   if (id === 'inp-hfFloor')   { S.hfFloor         = parseFloat(el.value)||0; renderOutputs(); }
 });
 
+// AUTOSAVE — second listener fires after every edit above, persisting S
+document.getElementById('main').addEventListener('input', save);
+
 // DELETE ROWS
 document.getElementById('main').addEventListener('click', function(e) {
   const btn = e.target.closest('.btn-del');
@@ -1335,6 +1406,7 @@ document.getElementById('main').addEventListener('click', function(e) {
     renderVDHoursTable();
     renderOutputs();
   }
+  save();
 });
 
 // ADD ROWS
@@ -1342,6 +1414,7 @@ document.getElementById('add-hf-hour').addEventListener('click', () => {
   S.hfHours.push({ label:'Nieuwe rij', hours:0, rate:110 });
   renderHFHoursTable();
   renderOutputs();
+  save();
   // Focus last label input
   const inputs = document.querySelectorAll('#tbody-hf-hours input[data-type="hf-hours-label"]');
   if (inputs.length) inputs[inputs.length-1].focus();
@@ -1350,6 +1423,7 @@ document.getElementById('add-hf-cash').addEventListener('click', () => {
   S.hfCash.push({ label:'Nieuwe post', amount:0 });
   renderHFCashTable();
   renderOutputs();
+  save();
   const inputs = document.querySelectorAll('#tbody-hf-cash input[data-type="hf-cash-label"]');
   if (inputs.length) inputs[inputs.length-1].focus();
 });
@@ -1357,13 +1431,16 @@ document.getElementById('add-vd-hour').addEventListener('click', () => {
   S.vdHours.push({ label:'Nieuwe rij', hours:0, rate:110 });
   renderVDHoursTable();
   renderOutputs();
+  save();
   const inputs = document.querySelectorAll('#tbody-vd-hours input[data-type="vd-hours-label"]');
   if (inputs.length) inputs[inputs.length-1].focus();
 });
 
 // RESET
 document.getElementById('btn-reset').addEventListener('click', () => {
+  if (!confirm('Alle wijzigingen wissen en terug naar de standaardwaarden?')) return;
   S = deepClone(DEFAULTS);
+  clearSaved();
   renderAllEditableTables();
 });
 
@@ -1394,6 +1471,7 @@ function escAttr(s)       { return String(s).replace(/"/g,'&quot;').replace(/'/g
 // ═══════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════
+load();                 // restore any previously saved edits
 renderAllEditableTables();
 </script>
 </body>
